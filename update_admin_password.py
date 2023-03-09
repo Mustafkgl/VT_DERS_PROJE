@@ -11,3 +11,11 @@ conn = psycopg2.connect(
 )
 
 cur = conn.cursor()
+
+# Admin şifresini hash'le
+hashed_password = generate_password_hash('admin123')
+
+# Veritabanını güncelle
+cur.execute(
+    "UPDATE users SET password = %s WHERE username = %s",
+    (hashed_password, 'admin')
