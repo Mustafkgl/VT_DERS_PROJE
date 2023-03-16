@@ -19,3 +19,10 @@ hashed_password = generate_password_hash('admin123')
 cur.execute(
     "UPDATE users SET password = %s WHERE username = %s",
     (hashed_password, 'admin')
+)
+
+conn.commit()
+cur.close()
+conn.close()
+
+print("Admin şifresi başarıyla hash'lendi!")
