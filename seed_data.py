@@ -43,3 +43,49 @@ for username, email, role in users:
         print(f"  ✗ {username} eklenemedi: {e}")
         conn.rollback()
         continue
+
+conn.commit()
+
+# Kullanıcı ID'lerini al
+cur.execute("SELECT id FROM users WHERE role = 'member'")
+user_ids = [row[0] for row in cur.fetchall()]
+
+# Kitap ID'lerini al
+cur.execute("SELECT id FROM books")
+book_ids = [row[0] for row in cur.fetchall()]
+
+# 2. Ödünç alma kayıtları ekle
+print("\n📖 Ödünç alma kayıtları oluşturuluyor...")
+
+borrowings_data = []
+
+# Aktif ödünç kayıtları (iade edilmemiş)
+for _ in range(15):
+    user_id = random.choice(user_ids)
+    book_id = random.choice(book_ids)
+    borrow_date = datetime.now() - timedelta(days=random.randint(1, 20))
+    due_date = borrow_date + timedelta(days=14)
+
+    borrowings_data.append((
+        user_id, book_id, borrow_date, due_date, None, 'borrowed'
+    ))
+
+# İade edilmiş kayıtlar (zamanında)
+for _ in range(25):
+    user_id = random.choice(user_ids)
+    book_id = random.choice(book_ids)
+    borrow_date = datetime.now() - timedelta(days=random.randint(30, 90))
+    due_date = borrow_date + timedelta(days=14)
+    return_date = borrow_date + timedelta(days=random.randint(7, 13))  # Zamanında iade
+
+    borrowings_data.append((
+        user_id, book_id, borrow_date, due_date, return_date, 'returned'
+    ))
+
+# Gecikmeli iade edilmiş kayıtlar (ceza var)
+for _ in range(10):
+    user_id = random.choice(user_ids)
+    book_id = random.choice(book_ids)
+    borrow_date = datetime.now() - timedelta(days=random.randint(45, 120))
+    due_date = borrow_date + timedelta(days=14)
+    return_date = due_date + timedelta(days=random.randint(3, 15))  # Gecikmeli iade
