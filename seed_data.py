@@ -89,3 +89,49 @@ for _ in range(10):
     borrow_date = datetime.now() - timedelta(days=random.randint(45, 120))
     due_date = borrow_date + timedelta(days=14)
     return_date = due_date + timedelta(days=random.randint(3, 15))  # Gecikmeli iade
+
+    borrowings_data.append((
+        user_id, book_id, borrow_date, due_date, return_date, 'overdue'
+    ))
+
+for i, (user_id, book_id, borrow_date, due_date, return_date, status) in enumerate(borrowings_data, 1):
+    try:
+        cur.execute(
+            """INSERT INTO borrowings
+               (user_id, book_id, borrow_date, due_date, return_date, status)
+               VALUES (%s, %s, %s, %s, %s, %s)""",
+            (user_id, book_id, borrow_date, due_date, return_date, status)
+        )
+
+        # Eğer gecikmeli iade varsa, trigger otomatik ceza oluşturacak
+        if status == 'overdue' and return_date:
+            # Trigger'ın çalışması için update yapalım
+            cur.execute(
+                "UPDATE borrowings SET return_date = %s WHERE id = (SELECT MAX(id) FROM borrowings)",
+                (return_date,)
+            )
+
+        print(f"  ✓ Ödünç kaydı {i}/{len(borrowings_data)} - Durum: {status}")
+    except Exception as e:
+        print(f"  ✗ Ödünç kaydı {i} eklenemedi: {e}")
+        conn.rollback()
+        continue
+
+conn.commit()
+
+# 3. Kitap stoklarını güncelle (ödünç alınmış kitaplar için)
+print("\n📦 Kitap stokları güncelleniyor...")
+cur.execute("""
+    UPDATE books
+    SET available_copies = total_copies - (
+        SELECT COUNT(*)
+        FROM borrowings
+        WHERE borrowings.book_id = books.id
+        AND borrowings.status = 'borrowed'
+    )
+""")
+conn.commit()
+
+# 4. İstatistikler
+print("\n" + "="*50)
+print("📊 VERİTABANI İSTATİSTİKLERİ")
