@@ -135,3 +135,48 @@ conn.commit()
 # 4. İstatistikler
 print("\n" + "="*50)
 print("📊 VERİTABANI İSTATİSTİKLERİ")
+print("="*50)
+
+cur.execute("SELECT COUNT(*) FROM users WHERE role = 'member'")
+print(f"👥 Üye Sayısı: {cur.fetchone()[0]}")
+
+cur.execute("SELECT COUNT(*) FROM users WHERE role = 'admin'")
+print(f"👨‍💼 Admin Sayısı: {cur.fetchone()[0]}")
+
+cur.execute("SELECT COUNT(*) FROM books")
+print(f"📚 Toplam Kitap: {cur.fetchone()[0]}")
+
+cur.execute("SELECT SUM(total_copies) FROM books")
+print(f"📖 Toplam Kopya: {cur.fetchone()[0]}")
+
+cur.execute("SELECT COUNT(*) FROM borrowings")
+print(f"📋 Toplam Ödünç Kaydı: {cur.fetchone()[0]}")
+
+cur.execute("SELECT COUNT(*) FROM borrowings WHERE status = 'borrowed'")
+print(f"🔄 Aktif Ödünç: {cur.fetchone()[0]}")
+
+cur.execute("SELECT COUNT(*) FROM borrowings WHERE status = 'returned'")
+print(f"✅ İade Edilmiş: {cur.fetchone()[0]}")
+
+cur.execute("SELECT COUNT(*) FROM borrowings WHERE status = 'overdue'")
+print(f"⚠️  Gecikmeli İade: {cur.fetchone()[0]}")
+
+cur.execute("SELECT COUNT(*) FROM fines")
+print(f"💰 Toplam Ceza Kaydı: {cur.fetchone()[0]}")
+
+cur.execute("SELECT COUNT(*) FROM fines WHERE paid = false")
+print(f"❌ Ödenmemiş Ceza: {cur.fetchone()[0]}")
+
+cur.execute("SELECT COALESCE(SUM(amount), 0) FROM fines WHERE paid = false")
+print(f"💵 Toplam Borç: {cur.fetchone()[0]} TL")
+
+print("="*50)
+print("\n✨ Tüm veriler başarıyla eklendi!")
+print("\n🔑 Test Kullanıcıları:")
+print("   Admin: admin / admin123")
+print("   Üye: ahmet_yilmaz / 123456")
+print("   Üye: ayse_demir / 123456")
+print("   (Tüm üyeler için şifre: 123456)")
+
+cur.close()
+conn.close()
