@@ -22,3 +22,10 @@ class Config:
     # JWT Configuration
     JWT_ALGORITHM = 'HS256'
     JWT_EXPIRATION_HOURS = 24
+
+    # CORS Configuration
+    CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:5000').split(',')  # Comma-separated list
+
+    # Environment
+    FLASK_ENV = os.getenv('FLASK_ENV', 'development')
+    FORCE_HTTPS = os.getenv('FORCE_HTTPS', 'False').lower() == 'true'
