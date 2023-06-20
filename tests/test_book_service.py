@@ -30,3 +30,36 @@ class TestBookService:
         with app.app_context():
             result = BookService.create_book(
                 title='',
+                author='Some Author'
+            )
+
+            assert result['success'] is False
+            assert 'gerekli' in result['message']
+
+    def test_create_book_invalid_isbn(self, app, db_session):
+        """Test book creation with invalid ISBN"""
+        with app.app_context():
+            result = BookService.create_book(
+                title='Test Book',
+                author='Test Author',
+                isbn='invalid-isbn'
+            )
+
+            assert result['success'] is False
+            assert 'ISBN' in result['message']
+
+    def test_create_book_duplicate_isbn(self, app, db_session):
+        """Test book creation with duplicate ISBN"""
+        with app.app_context():
+            isbn = '978-0132350884'
+
+            # First book
+            BookService.create_book('Book 1', 'Author 1', isbn=isbn)
+
+            # Second book with same ISBN
+            result = BookService.create_book('Book 2', 'Author 2', isbn=isbn)
+
+            assert result['success'] is False
+            assert 'zaten kayıtlı' in result['message']
+
+    def test_search_books(self, app, db_session):
