@@ -63,3 +63,35 @@ class TestBookService:
             assert 'zaten kayıtlı' in result['message']
 
     def test_search_books(self, app, db_session):
+        """Test book search functionality"""
+        with app.app_context():
+            # Create test books
+            BookService.create_book('Clean Code', 'Robert Martin')
+            BookService.create_book('Design Patterns', 'Gang of Four')
+            BookService.create_book('Refactoring', 'Martin Fowler')
+
+            # Search by title
+            result = BookService.search_books('Clean')
+            assert result['success'] is True
+            assert len(result['books']) == 1
+            assert result['books'][0]['title'] == 'Clean Code'
+
+            # Search by author
+            result = BookService.search_books('Martin')
+            assert result['success'] is True
+            assert len(result['books']) >= 2  # Clean Code and Refactoring
+
+    def test_get_available_books(self, app, db_session):
+        """Test getting available books"""
+        with app.app_context():
+            # Create books
+            BookService.create_book('Book 1', 'Author 1', total_copies=3)
+            BookService.create_book('Book 2', 'Author 2', total_copies=0)
+
+            result = BookService.get_available_books()
+
+            assert result['success'] is True
+            assert len(result['books']) == 1
+            assert result['books'][0]['title'] == 'Book 1'
+
+    def test_update_book(self, app, db_session):
