@@ -95,3 +95,35 @@ class TestBookService:
             assert result['books'][0]['title'] == 'Book 1'
 
     def test_update_book(self, app, db_session):
+        """Test book update"""
+        with app.app_context():
+            # Create book
+            create_result = BookService.create_book('Original Title', 'Original Author')
+            book_id = create_result['book']['id']
+
+            # Update book
+            result = BookService.update_book(
+                book_id,
+                title='Updated Title',
+                author='Updated Author'
+            )
+
+            assert result['success'] is True
+            assert result['book']['title'] == 'Updated Title'
+            assert result['book']['author'] == 'Updated Author'
+
+    def test_delete_book(self, app, db_session):
+        """Test book deletion"""
+        with app.app_context():
+            # Create book
+            create_result = BookService.create_book('Test Book', 'Test Author')
+            book_id = create_result['book']['id']
+
+            # Delete book
+            result = BookService.delete_book(book_id)
+
+            assert result['success'] is True
+
+            # Verify deletion
+            get_result = BookService.get_book(book_id)
+            assert get_result['success'] is False
