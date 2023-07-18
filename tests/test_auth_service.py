@@ -27,3 +27,33 @@ class TestAuthService:
 
     def test_register_duplicate_username(self, app, db_session):
         """Test registration with duplicate username"""
+        with app.app_context():
+            # First registration
+            AuthService.register('testuser', 'test1@example.com', 'pass123')
+
+            # Second registration with same username
+            result = AuthService.register('testuser', 'test2@example.com', 'pass456')
+
+            assert result['success'] is False
+            assert 'zaten kullanımda' in result['message']
+
+    def test_register_invalid_email(self, app, db_session):
+        """Test registration with invalid email"""
+        with app.app_context():
+            result = AuthService.register(
+                username='testuser',
+                email='invalid-email',
+                password='pass123'
+            )
+
+            assert result['success'] is False
+            assert 'Geçersiz email' in result['message']
+
+    def test_register_weak_password(self, app, db_session):
+        """Test registration with weak password"""
+        with app.app_context():
+            result = AuthService.register(
+                username='testuser',
+                email='test@example.com',
+                password='123'  # Too short
+            )
