@@ -57,3 +57,32 @@ class TestAuthService:
                 email='test@example.com',
                 password='123'  # Too short
             )
+
+            assert result['success'] is False
+            assert 'en az 6 karakter' in result['message']
+
+    def test_login_success(self, app, db_session):
+        """Test successful login"""
+        with app.app_context():
+            # Register user first
+            AuthService.register('testuser', 'test@example.com', 'pass123')
+
+            # Login
+            result = AuthService.login('testuser', 'pass123')
+
+            assert result['success'] is True
+            assert 'token' in result
+            assert result['user']['username'] == 'testuser'
+
+    def test_login_invalid_username(self, app, db_session):
+        """Test login with non-existent username"""
+        with app.app_context():
+            result = AuthService.login('nonexistent', 'pass123')
+
+            assert result['success'] is False
+            assert 'hatalı' in result['message']
+
+    def test_login_invalid_password(self, app, db_session):
+        """Test login with wrong password"""
+        with app.app_context():
+            # Register user
