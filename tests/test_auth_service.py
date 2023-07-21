@@ -86,3 +86,32 @@ class TestAuthService:
         """Test login with wrong password"""
         with app.app_context():
             # Register user
+            AuthService.register('testuser', 'test@example.com', 'correctpass')
+
+            # Login with wrong password
+            result = AuthService.login('testuser', 'wrongpass')
+
+            assert result['success'] is False
+            assert 'hatalı' in result['message']
+
+    def test_verify_token_success(self, app, db_session):
+        """Test token verification"""
+        with app.app_context():
+            # Register and login
+            AuthService.register('testuser', 'test@example.com', 'pass123')
+            login_result = AuthService.login('testuser', 'pass123')
+            token = login_result['token']
+
+            # Verify token
+            result = AuthService.verify_token(token)
+
+            assert result['success'] is True
+            assert result['payload']['username'] == 'testuser'
+
+    def test_verify_invalid_token(self, app, db_session):
+        """Test verification of invalid token"""
+        with app.app_context():
+            result = AuthService.verify_token('invalid.token.here')
+
+            assert result['success'] is False
+            assert 'Geçersiz token' in result['message']
