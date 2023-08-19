@@ -25,3 +25,17 @@ class TestConfig(Config):
 @pytest.fixture(scope='function')
 def app():
     """Create application for testing"""
+    app = create_app()
+    app.config.from_object(TestConfig)
+
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.session.remove()
+        db.drop_all()
+
+
+@pytest.fixture(scope='function')
+def client(app):
+    """Flask test client"""
+    return app.test_client()
