@@ -39,3 +39,16 @@ def app():
 def client(app):
     """Flask test client"""
     return app.test_client()
+
+
+@pytest.fixture(scope='function')
+def runner(app):
+    """Flask CLI runner"""
+    return app.test_cli_runner()
+
+
+@pytest.fixture(scope='function')
+def db_session(app):
+    """Database session for tests"""
+    with app.app_context():
+        yield db.session
