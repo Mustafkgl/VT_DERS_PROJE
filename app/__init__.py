@@ -17,3 +17,21 @@ def create_app():
         r"/api/*": {
             "origins": app.config.get('CORS_ORIGINS', ["http://localhost:5000"]),
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "expose_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True,
+            "max_age": 3600
+        }
+    })
+
+    # Veritabanı başlat
+    db.init_app(app)
+
+    # Migration başlat
+    migrate.init_app(app, db)
+
+    # Rate Limiting başlat
+    global limiter
+    from app.utils.rate_limiter import get_limiter
+    limiter = get_limiter()
+    limiter.init_app(app)
