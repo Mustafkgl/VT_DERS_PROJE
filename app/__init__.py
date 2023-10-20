@@ -35,3 +35,23 @@ def create_app():
     from app.utils.rate_limiter import get_limiter
     limiter = get_limiter()
     limiter.init_app(app)
+
+    # Security Headers ekle
+    from app.utils.security_headers import add_security_headers
+    add_security_headers(app)
+
+    # Logging sistemini başlat
+    from app.utils.logger import setup_logging
+    setup_logging(app)
+
+    # Error handler'ları kaydet
+    from app.utils.error_handlers import register_error_handlers
+    register_error_handlers(app)
+
+    # Blueprint'leri kaydet
+    from app.controllers.auth_controller import auth_bp
+    from app.controllers.book_controller import book_bp
+    from app.controllers.borrowing_controller import borrowing_bp
+    from app.controllers.fine_controller import fine_bp
+
+    app.register_blueprint(auth_bp)
