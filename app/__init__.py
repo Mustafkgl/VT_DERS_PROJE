@@ -55,3 +55,21 @@ def create_app():
     from app.controllers.fine_controller import fine_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(book_bp)
+    app.register_blueprint(borrowing_bp)
+    app.register_blueprint(fine_bp)
+
+    # Ana sayfa route'ları
+    @app.route('/')
+    def index():
+        return render_template('index.html')
+
+    @app.route('/register')
+    def register_page():
+        return render_template('register.html')
+
+    @app.route('/dashboard')
+    def dashboard():
+        return render_template('dashboard.html')
+
+    return app
