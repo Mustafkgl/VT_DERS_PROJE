@@ -75,3 +75,43 @@ class InputValidator:
 
         # HTML karakterlerini escape et
         sanitized = escape(str(text).strip())
+
+        # Maksimum uzunluk kontrolü
+        if max_length and len(sanitized) > max_length:
+            sanitized = sanitized[:max_length]
+
+        return sanitized
+
+    @staticmethod
+    def validate_email(email):
+        """Email formatı kontrolü"""
+        if not email:
+            return False
+
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        return bool(re.match(email_pattern, email))
+
+    @staticmethod
+    def validate_username(username):
+        """
+        Kullanıcı adı kontrolü
+        - 3-50 karakter
+        - Sadece harf, rakam, alt çizgi ve tire
+        """
+        if not username or len(username) < 3 or len(username) > 50:
+            return False
+
+        username_pattern = r'^[a-zA-Z0-9_-]+$'
+        return bool(re.match(username_pattern, username))
+
+    @staticmethod
+    def validate_isbn(isbn):
+        """ISBN formatı kontrolü (ISBN-10 veya ISBN-13)"""
+        if not isbn:
+            return True  # ISBN opsiyonel
+
+        # Sadece rakam ve tire
+        isbn_clean = isbn.replace('-', '').replace(' ', '')
+
+        # ISBN-10 veya ISBN-13
+        if len(isbn_clean) not in [10, 13]:
