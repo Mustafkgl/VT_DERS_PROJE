@@ -115,3 +115,41 @@ class InputValidator:
 
         # ISBN-10 veya ISBN-13
         if len(isbn_clean) not in [10, 13]:
+            return False
+
+        return isbn_clean.isdigit()
+
+    @staticmethod
+    def validate_year(year):
+        """Yıl kontrolü (1000-2100 arası)"""
+        if not year:
+            return True  # Yıl opsiyonel
+
+        try:
+            year_int = int(year)
+            return 1000 <= year_int <= 2100
+        except (ValueError, TypeError):
+            return False
+
+    @staticmethod
+    def validate_positive_integer(value, min_value=1, max_value=None):
+        """Pozitif tamsayı kontrolü"""
+        try:
+            int_value = int(value)
+            if int_value < min_value:
+                return False
+            if max_value and int_value > max_value:
+                return False
+            return True
+        except (ValueError, TypeError):
+            return False
+
+    @staticmethod
+    def remove_html_tags(text):
+        """HTML taglerini kaldır"""
+        if not text:
+            return text
+
+        # HTML taglerini temizle
+        clean_text = re.sub(r'<[^>]+>', '', str(text))
+        return clean_text.strip()
