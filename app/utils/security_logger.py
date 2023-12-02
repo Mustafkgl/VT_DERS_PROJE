@@ -69,3 +69,74 @@ class SecurityLogger:
                 f'Successful login: {username}',
                 extra={'extra_data': extra_data}
             )
+        else:
+            extra_data['reason'] = reason
+            self.logger.warning(
+                f'Failed login attempt: {username} - {reason}',
+                extra={'extra_data': extra_data}
+            )
+
+    def log_logout(self, user_id, username):
+        """Logout logla"""
+        extra_data = {
+            'event': 'logout',
+            'user_id': user_id,
+            'username': username,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        self.logger.info(
+            f'User logout: {username}',
+            extra={'extra_data': extra_data}
+        )
+
+    def log_registration(self, username, email, role, success):
+        """Kayıt işlemini logla"""
+        extra_data = {
+            'event': 'user_registration',
+            'username': username,
+            'email': email,
+            'role': role,
+            'success': success,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        self.logger.info(
+            f'User registration: {username} ({role})',
+            extra={'extra_data': extra_data}
+        )
+
+    def log_unauthorized_access(self, endpoint, user_id=None, required_role=None):
+        """Yetkisiz erişim denemesi logla"""
+        extra_data = {
+            'event': 'unauthorized_access',
+            'endpoint': endpoint,
+            'user_id': user_id,
+            'required_role': required_role,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        self.logger.warning(
+            f'Unauthorized access attempt to {endpoint}',
+            extra={'extra_data': extra_data}
+        )
+
+    def log_token_validation(self, success, reason=None, user_id=None):
+        """Token validasyon logla"""
+        extra_data = {
+            'event': 'token_validation',
+            'success': success,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        if success:
+            extra_data['user_id'] = user_id
+            self.logger.debug(
+                'Token validation successful',
+                extra={'extra_data': extra_data}
+            )
+        else:
