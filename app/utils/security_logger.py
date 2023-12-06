@@ -140,3 +140,74 @@ class SecurityLogger:
                 extra={'extra_data': extra_data}
             )
         else:
+            extra_data['reason'] = reason
+            self.logger.warning(
+                f'Token validation failed: {reason}',
+                extra={'extra_data': extra_data}
+            )
+
+    def log_password_change(self, user_id, username, success):
+        """Şifre değişikliği logla"""
+        extra_data = {
+            'event': 'password_change',
+            'user_id': user_id,
+            'username': username,
+            'success': success,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        self.logger.info(
+            f'Password change for user {username}',
+            extra={'extra_data': extra_data}
+        )
+
+    def log_suspicious_activity(self, activity_type, details):
+        """
+        Şüpheli aktivite logla
+
+        Args:
+            activity_type: SQL Injection, XSS, Brute Force, etc.
+            details: Aktivite detayları
+        """
+        extra_data = {
+            'event': 'suspicious_activity',
+            'activity_type': activity_type,
+            'details': details,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        self.logger.critical(
+            f'SUSPICIOUS ACTIVITY: {activity_type}',
+            extra={'extra_data': extra_data}
+        )
+
+    def log_data_access(self, user_id, resource_type, resource_id, action):
+        """
+        Veri erişimi logla (Audit Trail)
+
+        Args:
+            user_id: Kullanıcı ID
+            resource_type: book, borrowing, fine, etc.
+            resource_id: Kaynak ID
+            action: read, create, update, delete
+        """
+        extra_data = {
+            'event': 'data_access',
+            'user_id': user_id,
+            'resource_type': resource_type,
+            'resource_id': resource_id,
+            'action': action,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        self.logger.info(
+            f'Data access: {action} {resource_type}#{resource_id} by user#{user_id}',
+            extra={'extra_data': extra_data}
+        )
+
+    def log_validation_error(self, field, value, error_type):
+        """
+        Validation hatası logla
