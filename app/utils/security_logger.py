@@ -211,3 +211,74 @@ class SecurityLogger:
     def log_validation_error(self, field, value, error_type):
         """
         Validation hatası logla
+
+        Args:
+            field: Alan adı
+            value: Hatalı değer
+            error_type: Hata tipi (XSS, SQL Injection attempt, etc.)
+        """
+        extra_data = {
+            'event': 'validation_error',
+            'field': field,
+            'value': value[:100] if len(str(value)) > 100 else value,  # Truncate
+            'error_type': error_type,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        self.logger.warning(
+            f'Validation error: {error_type} in {field}',
+            extra={'extra_data': extra_data}
+        )
+
+    def log_rate_limit_exceeded(self, user_id=None, endpoint=None):
+        """Rate limit aşımı logla"""
+        extra_data = {
+            'event': 'rate_limit_exceeded',
+            'user_id': user_id,
+            'endpoint': endpoint,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        self.logger.warning(
+            f'Rate limit exceeded for {endpoint or "unknown endpoint"}',
+            extra={'extra_data': extra_data}
+        )
+
+    def log_admin_action(self, admin_id, action, target_type, target_id, details=None):
+        """
+        Admin işlemlerini logla
+
+        Args:
+            admin_id: Admin kullanıcı ID
+            action: create_book, delete_user, etc.
+            target_type: book, user, etc.
+            target_id: Hedef ID
+            details: Ek detaylar
+        """
+        extra_data = {
+            'event': 'admin_action',
+            'admin_id': admin_id,
+            'action': action,
+            'target_type': target_type,
+            'target_id': target_id,
+            'timestamp': datetime.utcnow().isoformat(),
+            **self._get_request_info()
+        }
+
+        if details:
+            extra_data['details'] = details
+
+        self.logger.info(
+            f'Admin action: {action} on {target_type}#{target_id} by admin#{admin_id}',
+            extra={'extra_data': extra_data}
+        )
+
+
+# Singleton instance
+security_logger = SecurityLogger()
+
+
+# Logging importları
+import logging.handlers
