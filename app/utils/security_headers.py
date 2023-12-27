@@ -43,3 +43,17 @@ def add_security_headers(app: Flask):
             "font-src 'self' data:",
             "connect-src 'self'",
             "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'"
+        ]
+        response.headers['Content-Security-Policy'] = '; '.join(csp_directives)
+
+        # Referrer policy
+        response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+
+        # Permissions policy (önceden Feature-Policy)
+        response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+
+        return response
+
+    return app
