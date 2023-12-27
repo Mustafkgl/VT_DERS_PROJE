@@ -27,3 +27,19 @@ def add_security_headers(app: Flask):
 
         # XSS koruması (eski tarayıcılar için)
         response.headers['X-XSS-Protection'] = '1; mode=block'
+
+        # HTTPS zorunluluğu (production için)
+        # 1 yıl = 31536000 saniye
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+
+        # Content Security Policy
+        # Self: Sadece kendi domain'den kaynak
+        # unsafe-inline: Inline script/style izni (gerekirse kaldırılabilir)
+        csp_directives = [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline'",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: https:",
+            "font-src 'self' data:",
+            "connect-src 'self'",
+            "frame-ancestors 'none'",
