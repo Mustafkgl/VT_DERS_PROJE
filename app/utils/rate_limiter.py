@@ -21,3 +21,15 @@ def get_limiter():
         storage_uri="memory://",
         strategy="fixed-window",
         headers_enabled=True,
+    )
+    return limiter
+
+
+# Endpoint-specific rate limiting decorators
+def login_limit():
+    """Login endpoint için rate limit: 5 deneme/dakika"""
+    return "5 per minute"
+
+
+def register_limit():
+    """Register endpoint için rate limit: 3 kayıt/saat"""
