@@ -33,3 +33,14 @@ def login_limit():
 
 def register_limit():
     """Register endpoint için rate limit: 3 kayıt/saat"""
+    return "3 per hour"
+
+
+def api_limit():
+    """Genel API endpoint'leri için rate limit: 100 istek/dakika"""
+    return "100 per minute"
+
+
+def admin_api_limit():
+    """Admin API endpoint'leri için rate limit: 50 istek/dakika"""
+    return "50 per minute"
