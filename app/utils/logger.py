@@ -49,3 +49,57 @@ class JSONFormatter(logging.Formatter):
 
         return json.dumps(log_data, ensure_ascii=False)
 
+
+def setup_logging(app):
+    """
+    Logging yapılandırması
+
+    Log dosyaları:
+    - logs/app.log - Genel uygulama logları
+    - logs/security.log - Güvenlik olayları
+    - logs/error.log - Hatalar
+    """
+
+    # Log dizini oluştur
+    log_dir = 'logs'
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    # Root logger
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+
+    # Console handler (development)
+    if app.debug:
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+        console_formatter = logging.Formatter(
+            '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+        )
+        console_handler.setFormatter(console_formatter)
+        root_logger.addHandler(console_handler)
+
+    # File handler - Genel loglar
+    app_handler = logging.handlers.RotatingFileHandler(
+        os.path.join(log_dir, 'app.log'),
+        maxBytes=10485760,  # 10MB
+        backupCount=10
+    )
+    app_handler.setLevel(logging.INFO)
+    app_handler.setFormatter(JSONFormatter())
+    root_logger.addHandler(app_handler)
+
+    # File handler - Error loglar
+    error_handler = logging.handlers.RotatingFileHandler(
+        os.path.join(log_dir, 'error.log'),
+        maxBytes=10485760,  # 10MB
+        backupCount=10
+    )
+    error_handler.setLevel(logging.ERROR)
+    error_handler.setFormatter(JSONFormatter())
+    root_logger.addHandler(error_handler)
+
+    # Flask app logger
+    app.logger.info('Logging system initialized')
+
+    return root_logger
