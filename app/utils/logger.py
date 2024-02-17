@@ -103,3 +103,55 @@ def setup_logging(app):
     app.logger.info('Logging system initialized')
 
     return root_logger
+
+
+def log_execution_time(func):
+    """
+    Decorator: Fonksiyon çalışma süresini logla
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = datetime.utcnow()
+        logger = logging.getLogger(func.__module__)
+
+        try:
+            result = func(*args, **kwargs)
+            execution_time = (datetime.utcnow() - start_time).total_seconds()
+
+            # Başarılı execution
+            extra_data = {
+                'function': func.__name__,
+                'execution_time': f'{execution_time:.3f}s',
+                'status': 'success'
+            }
+            logger.info(
+                f'{func.__name__} executed successfully',
+                extra={'extra_data': extra_data}
+            )
+
+            return result
+
+        except Exception as e:
+            execution_time = (datetime.utcnow() - start_time).total_seconds()
+
+            # Hatalı execution
+            extra_data = {
+                'function': func.__name__,
+                'execution_time': f'{execution_time:.3f}s',
+                'status': 'error',
+                'error': str(e)
+            }
+            logger.error(
+                f'{func.__name__} failed: {str(e)}',
+                extra={'extra_data': extra_data},
+                exc_info=True
+            )
+
+            raise
+
+    return wrapper
+
+
+def log_database_query(query_type, table, details=None):
+    """
+    Veritabanı sorguları için log
