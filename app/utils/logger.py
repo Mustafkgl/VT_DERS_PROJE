@@ -155,3 +155,56 @@ def log_execution_time(func):
 def log_database_query(query_type, table, details=None):
     """
     Veritabanı sorguları için log
+
+    Args:
+        query_type: SELECT, INSERT, UPDATE, DELETE
+        table: Tablo adı
+        details: Ek detaylar
+    """
+    logger = logging.getLogger('database')
+
+    extra_data = {
+        'query_type': query_type,
+        'table': table,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+
+    if details:
+        extra_data['details'] = details
+
+    logger.info(
+        f'Database {query_type} on {table}',
+        extra={'extra_data': extra_data}
+    )
+
+
+def log_api_request(endpoint, method, user_id=None, response_code=None):
+    """
+    API istekleri için log
+
+    Args:
+        endpoint: API endpoint
+        method: HTTP method
+        user_id: Kullanıcı ID (varsa)
+        response_code: HTTP response code
+    """
+    logger = logging.getLogger('api')
+
+    extra_data = {
+        'endpoint': endpoint,
+        'method': method,
+        'response_code': response_code,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+
+    if user_id:
+        extra_data['user_id'] = user_id
+
+    logger.info(
+        f'{method} {endpoint} -> {response_code}',
+        extra={'extra_data': extra_data}
+    )
+
+
+# Logging importları için
+import logging.handlers
