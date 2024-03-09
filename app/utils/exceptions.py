@@ -12,3 +12,20 @@ class LibraryException(Exception):
         self.details = details or {}
         super().__init__(self.message)
 
+
+class DatabaseException(LibraryException):
+    """Database operation hatası"""
+    def __init__(self, message, details=None):
+        super().__init__(message, error_code='DB_ERROR', details=details)
+
+
+class ValidationException(LibraryException):
+    """Input validation hatası"""
+    def __init__(self, message, field=None, details=None):
+        details = details or {}
+        if field:
+            details['field'] = field
+        super().__init__(message, error_code='VALIDATION_ERROR', details=details)
+
+
+class AuthenticationException(LibraryException):
