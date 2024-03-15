@@ -29,3 +29,19 @@ class ValidationException(LibraryException):
 
 
 class AuthenticationException(LibraryException):
+    """Authentication hatası"""
+    def __init__(self, message, details=None):
+        super().__init__(message, error_code='AUTH_ERROR', details=details)
+
+
+class AuthorizationException(LibraryException):
+    """Authorization hatası"""
+    def __init__(self, message, details=None):
+        super().__init__(message, error_code='AUTHZ_ERROR', details=details)
+
+
+class ResourceNotFoundException(LibraryException):
+    """Kaynak bulunamadı hatası"""
+    def __init__(self, resource_type, resource_id, details=None):
+        message = f'{resource_type} bulunamadı (ID: {resource_id})'
+        details = details or {}
