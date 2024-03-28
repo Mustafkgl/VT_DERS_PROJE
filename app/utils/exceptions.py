@@ -45,3 +45,18 @@ class ResourceNotFoundException(LibraryException):
     def __init__(self, resource_type, resource_id, details=None):
         message = f'{resource_type} bulunamadı (ID: {resource_id})'
         details = details or {}
+        details['resource_type'] = resource_type
+        details['resource_id'] = resource_id
+        super().__init__(message, error_code='NOT_FOUND', details=details)
+
+
+class BusinessLogicException(LibraryException):
+    """İş mantığı hatası (stok yok, gecikmiş iade vb.)"""
+    def __init__(self, message, details=None):
+        super().__init__(message, error_code='BUSINESS_ERROR', details=details)
+
+
+class ConflictException(LibraryException):
+    """Veri çakışması hatası (duplicate ISBN vb.)"""
+    def __init__(self, message, details=None):
+        super().__init__(message, error_code='CONFLICT', details=details)
