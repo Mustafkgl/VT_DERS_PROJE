@@ -75,3 +75,42 @@ def register_error_handlers(app):
         }), 409
 
     @app.errorhandler(BusinessLogicException)
+    def handle_business_logic_error(error):
+        """Business logic hatası handler"""
+        logger.info(f'Business logic error: {error.message}')
+        return jsonify({
+            'success': False,
+            'error': 'business_error',
+            'message': error.message,
+            'details': error.details
+        }), 422
+
+    @app.errorhandler(DatabaseException)
+    def handle_database_error(error):
+        """Database hatası handler"""
+        logger.error(f'Database error: {error.message}', exc_info=True)
+        return jsonify({
+            'success': False,
+            'error': 'database_error',
+            'message': 'Veritabanı hatası oluştu'
+        }), 500
+
+    @app.errorhandler(SQLAlchemyError)
+    def handle_sqlalchemy_error(error):
+        """SQLAlchemy generic error handler"""
+        logger.error(f'SQLAlchemy error: {str(error)}', exc_info=True)
+        return jsonify({
+            'success': False,
+            'error': 'database_error',
+            'message': 'Veritabanı hatası oluştu'
+        }), 500
+
+    @app.errorhandler(LibraryException)
+    def handle_library_error(error):
+        """Generic library exception handler"""
+        logger.error(f'Library error: {error.message}', extra={'details': error.details})
+        return jsonify({
+            'success': False,
+            'error': error.error_code or 'library_error',
+            'message': error.message
+        }), 500
