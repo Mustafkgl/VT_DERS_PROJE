@@ -114,3 +114,41 @@ def register_error_handlers(app):
             'error': error.error_code or 'library_error',
             'message': error.message
         }), 500
+
+    @app.errorhandler(404)
+    def handle_404(error):
+        """404 Not Found handler"""
+        return jsonify({
+            'success': False,
+            'error': 'not_found',
+            'message': 'Sayfa bulunamadı'
+        }), 404
+
+    @app.errorhandler(500)
+    def handle_500(error):
+        """500 Internal Server Error handler"""
+        logger.error(f'Internal server error: {str(error)}', exc_info=True)
+        return jsonify({
+            'success': False,
+            'error': 'internal_server_error',
+            'message': 'Sunucu hatası oluştu'
+        }), 500
+
+    @app.errorhandler(Exception)
+    def handle_unexpected_error(error):
+        """Unexpected error handler"""
+        logger.critical(f'Unexpected error: {str(error)}', exc_info=True)
+
+        # Production'da detay gösterme
+        if app.config.get('DEBUG'):
+            message = str(error)
+        else:
+            message = 'Beklenmeyen bir hata oluştu'
+
+        return jsonify({
+            'success': False,
+            'error': 'unexpected_error',
+            'message': message
+        }), 500
+
+    logger.info('Error handlers registered successfully')
