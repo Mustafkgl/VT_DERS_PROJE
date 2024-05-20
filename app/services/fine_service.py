@@ -46,3 +46,27 @@ class FineService:
         fines = FineRepository.get_unpaid()
         return {
             'success': True,
+            'fines': [fine.to_dict() for fine in fines]
+        }
+
+    @staticmethod
+    def pay_fine(fine_id):
+        """Cezayı öde"""
+        logger.info(f'Fine payment attempt for fine ID: {fine_id}')
+
+        # Önce fine'ı al (bilgileri loglamak için)
+        from app.repositories.fine_repository import FineRepository as FR
+        fine_before = FR.find_by_id(fine_id)
+
+        if not fine_before:
+            logger.warning(f'Fine payment failed: Fine not found - ID {fine_id}')
+            return {'success': False, 'message': 'Ceza bulunamadı'}
+
+        if fine_before.paid:
+            logger.warning(f'Fine payment failed: Fine already paid - ID {fine_id}')
+            return {'success': False, 'message': 'Ceza zaten ödendi'}
+
+        fine = FineRepository.mark_as_paid(fine_id)
+        if fine:
+            # Data access logging
+            security_logger.log_data_access(fine.borrowing.user_id, 'fine', fine_id, 'update')
