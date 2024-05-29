@@ -70,3 +70,27 @@ class FineService:
         if fine:
             # Data access logging
             security_logger.log_data_access(fine.borrowing.user_id, 'fine', fine_id, 'update')
+            logger.info(
+                f'Fine paid successfully: Fine ID {fine_id}, '
+                f'Amount: {fine.amount}, User ID: {fine.borrowing.user_id}, '
+                f'Borrowing ID: {fine.borrowing_id}'
+            )
+            return {
+                'success': True,
+                'message': 'Ceza ödendi',
+                'fine': fine.to_dict()
+            }
+
+        logger.error(f'Fine payment failed: Database error for fine ID {fine_id}')
+        return {'success': False, 'message': 'Ceza bulunamadı'}
+
+    @staticmethod
+    def get_fine_by_borrowing(borrowing_id):
+        """Ödünç alma kaydına ait cezayı getir"""
+        fine = FineRepository.find_by_borrowing(borrowing_id)
+        if fine:
+            return {
+                'success': True,
+                'fine': fine.to_dict()
+            }
+        return {'success': False, 'message': 'Ceza bulunamadı'}
