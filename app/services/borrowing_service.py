@@ -45,3 +45,51 @@ class BorrowingService:
 
             # Kitap stok sayısını azalt (commit yapmadan)
             stock_decreased = BookRepository.decrease_available_copies(book_id, auto_commit=False)
+
+            if not stock_decreased:
+                raise SQLAlchemyError("Failed to decrease book stock")
+
+            # Her iki işlem başarılı - commit
+            db.session.commit()
+
+            # Data access logging
+            security_logger.log_data_access(user_id, 'borrowing', borrowing.id, 'create')
+            logger.info(
+                f'Book borrowed successfully: {book.title} (ID: {book_id}) '
+                f'by user {user.username} (ID: {user_id}), Due: {due_date.date()}'
+            )
+
+            return {
+                'success': True,
+                'message': 'Kitap ödünç alındı',
+                'borrowing': borrowing.to_dict()
+            }
+
+        except SQLAlchemyError as e:
+            # Hata durumunda rollback
+            db.session.rollback()
+            logger.error(
+                f'Borrow failed: Transaction error - User {user_id}, Book {book_id}: {str(e)}',
+                exc_info=True
+            )
+            return {'success': False, 'message': 'Ödünç alma işlemi başarısız'}
+
+    @staticmethod
+    def return_book(borrowing_id):
+        """Kitap iade et - Atomic transaction"""
+        logger.info(f'Return attempt for borrowing ID: {borrowing_id}')
+        borrowing = BorrowingRepository.find_by_id(borrowing_id)
+        if not borrowing:
+            logger.warning(f'Return failed: Borrowing not found - ID {borrowing_id}')
+            return {'success': False, 'message': 'Ödünç kaydı bulunamadı'}
+
+        if borrowing.status != 'borrowed':
+            logger.warning(f'Return failed: Book already returned - Borrowing ID {borrowing_id}')
+            return {'success': False, 'message': 'Kitap zaten iade edilmiş'}
+
+        user_id = borrowing.user_id
+        book_id = borrowing.book_id
+
+        # ATOMIC TRANSACTION - İade ve stok artırma tek transaction'da
+        try:
+            # İade işlemini yap
