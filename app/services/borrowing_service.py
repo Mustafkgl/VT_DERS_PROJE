@@ -93,3 +93,51 @@ class BorrowingService:
         # ATOMIC TRANSACTION - İade ve stok artırma tek transaction'da
         try:
             # İade işlemini yap
+            borrowing.return_date = datetime.utcnow()
+            borrowing.status = 'returned'
+
+            # Kitap stok sayısını artır (commit yapmadan)
+            stock_increased = BookRepository.increase_available_copies(book_id, auto_commit=False)
+
+            if not stock_increased:
+                raise SQLAlchemyError("Failed to increase book stock")
+
+            # Her iki işlem başarılı - commit (trigger da bu noktada çalışacak)
+            db.session.commit()
+
+            # Data access logging
+            security_logger.log_data_access(user_id, 'borrowing', borrowing_id, 'update')
+
+            is_late = borrowing.return_date > borrowing.due_date
+            logger.info(
+                f'Book returned successfully: Borrowing ID {borrowing_id}, '
+                f'User ID {user_id}, Book ID {book_id}, '
+                f'Late: {is_late}'
+            )
+
+            return {
+                'success': True,
+                'message': 'Kitap iade edildi',
+                'borrowing': borrowing.to_dict()
+            }
+
+        except SQLAlchemyError as e:
+            # Hata durumunda rollback
+            db.session.rollback()
+            logger.error(
+                f'Return failed: Transaction error for borrowing ID {borrowing_id}: {str(e)}',
+                exc_info=True
+            )
+            return {'success': False, 'message': 'İade işlemi başarısız'}
+
+    @staticmethod
+    def get_user_borrowings(user_id):
+        """Kullanıcının ödünç alma kayıtlarını getir"""
+        borrowings = BorrowingRepository.find_by_user(user_id)
+        return {
+            'success': True,
+            'borrowings': [b.to_dict() for b in borrowings]
+        }
+
+    @staticmethod
+    def get_active_borrowings():
