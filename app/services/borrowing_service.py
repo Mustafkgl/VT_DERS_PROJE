@@ -141,3 +141,50 @@ class BorrowingService:
 
     @staticmethod
     def get_active_borrowings():
+        """Aktif ödünç alma kayıtlarını getir"""
+        borrowings = BorrowingRepository.get_active()
+        return {
+            'success': True,
+            'borrowings': [b.to_dict() for b in borrowings]
+        }
+
+    @staticmethod
+    def get_all_borrowings():
+        """Tüm ödünç alma kayıtlarını getir"""
+        borrowings = BorrowingRepository.get_all()
+        return {
+            'success': True,
+            'borrowings': [b.to_dict() for b in borrowings]
+        }
+
+    @staticmethod
+    def get_borrowings_report(start_date, end_date):
+        """Stored Procedure ile rapor al"""
+        logger.info(f'Generating borrowings report: {start_date} to {end_date}')
+        try:
+            report = BorrowingRepository.get_report(start_date, end_date)
+            # Sonuçları dictionary'ye çevir
+            report_data = []
+            for row in report:
+                report_data.append({
+                    'borrowing_id': row[0],
+                    'user_name': row[1],
+                    'user_email': row[2],
+                    'book_title': row[3],
+                    'book_author': row[4],
+                    'borrow_date': row[5].isoformat() if row[5] else None,
+                    'due_date': row[6].isoformat() if row[6] else None,
+                    'return_date': row[7].isoformat() if row[7] else None,
+                    'status': row[8],
+                    'fine_amount': float(row[9]) if row[9] else 0.0,
+                    'fine_paid': row[10] if row[10] is not None else False
+                })
+
+            logger.info(f'Borrowings report generated successfully: {len(report_data)} records')
+            return {
+                'success': True,
+                'report': report_data
+            }
+        except Exception as e:
+            logger.error(f'Report generation failed: {str(e)}', exc_info=True)
+            return {'success': False, 'message': f'Rapor oluşturulamadı: {str(e)}'}
