@@ -41,3 +41,47 @@ class BookService:
             security_logger.log_validation_error('publication_year', publication_year, 'Invalid year')
             logger.warning(f'Book creation failed: Invalid publication year - {publication_year}')
             return {'success': False, 'message': 'Geçersiz yayın yılı'}
+
+        # Kopya sayısı kontrolü
+        if not InputValidator.validate_positive_integer(total_copies, min_value=1, max_value=1000):
+            security_logger.log_validation_error('total_copies', total_copies, 'Invalid copy count')
+            logger.warning(f'Book creation failed: Invalid copy count - {total_copies}')
+            return {'success': False, 'message': 'Geçersiz kopya sayısı (1-1000 arası olmalı)'}
+
+        try:
+            book = BookRepository.create(
+                title=title,
+                author=author,
+                isbn=isbn,
+                publisher=publisher,
+                publication_year=publication_year,
+                total_copies=total_copies,
+                available_copies=total_copies
+            )
+
+            if book:
+                logger.info(f'Book created successfully: {title} (ID: {book.id}, ISBN: {isbn or "N/A"})')
+                return {'success': True, 'message': 'Kitap eklendi', 'book': book.to_dict()}
+
+            logger.error(f'Book creation failed: Database error for {title}')
+            return {'success': False, 'message': 'Kitap eklenemedi'}
+
+        except IntegrityError as e:
+            # ISBN duplicate veya diğer constraint violation
+            logger.warning(f'Book creation failed: Integrity constraint violation - {str(e)}')
+            if isbn and 'isbn' in str(e).lower():
+                return {'success': False, 'message': 'Bu ISBN zaten kayıtlı'}
+            return {'success': False, 'message': 'Kitap eklenemedi (veri bütünlüğü hatası)'}
+
+    @staticmethod
+    def get_book(book_id):
+        """Kitap detayını getir"""
+        logger.debug(f'Fetching book details for ID: {book_id}')
+        book = BookRepository.find_by_id(book_id)
+        if book:
+            logger.debug(f'Book found: {book.title} (ID: {book_id})')
+            return {'success': True, 'book': book.to_dict()}
+        logger.warning(f'Book not found: ID {book_id}')
+        return {'success': False, 'message': 'Kitap bulunamadı'}
+
+    @staticmethod
