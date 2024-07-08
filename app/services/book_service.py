@@ -85,3 +85,46 @@ class BookService:
         return {'success': False, 'message': 'Kitap bulunamadı'}
 
     @staticmethod
+    def get_all_books(page: int = 1, per_page: int = 10):
+        """Tüm kitapları getir (paginated)"""
+        from app.models import Book
+
+        # Pagination
+        pagination = Book.query.order_by(Book.id.desc()).paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )
+
+        return {
+            'success': True,
+            'books': [book.to_dict() for book in pagination.items],
+            'pagination': {
+                'page': page,
+                'per_page': per_page,
+                'total': pagination.total,
+                'pages': pagination.pages,
+                'has_next': pagination.has_next,
+                'has_prev': pagination.has_prev
+            }
+        }
+
+    @staticmethod
+    def get_available_books():
+        """Mevcut kitapları getir"""
+        books = BookRepository.get_available()
+        return {
+            'success': True,
+            'books': [book.to_dict() for book in books]
+        }
+
+    @staticmethod
+    def search_books(query):
+        """Kitap ara"""
+        logger.info(f'Book search query: {query}')
+        books = BookRepository.search(query)
+        logger.info(f'Book search returned {len(books)} results for query: {query}')
+        return {
+            'success': True,
+            'books': [book.to_dict() for book in books]
+        }
