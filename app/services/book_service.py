@@ -128,3 +128,47 @@ class BookService:
             'success': True,
             'books': [book.to_dict() for book in books]
         }
+
+    @staticmethod
+    def update_book(book_id, **kwargs):
+        """Kitap güncelle"""
+        logger.info(f'Book update attempt for ID: {book_id}')
+        book = BookRepository.find_by_id(book_id)
+        if not book:
+            logger.warning(f'Book update failed: Book not found - ID {book_id}')
+            return {'success': False, 'message': 'Kitap bulunamadı'}
+
+        # Güncellenebilir alanlar
+        updatable_fields = ['title', 'author', 'isbn', 'publisher',
+                           'publication_year', 'total_copies']
+
+        updated_fields = []
+        for field in updatable_fields:
+            if field in kwargs:
+                setattr(book, field, kwargs[field])
+                updated_fields.append(field)
+
+        updated_book = BookRepository.update(book)
+        if updated_book:
+            logger.info(f'Book updated successfully: {book.title} (ID: {book_id}, Fields: {", ".join(updated_fields)})')
+            return {'success': True, 'message': 'Kitap güncellendi', 'book': updated_book.to_dict()}
+
+        logger.error(f'Book update failed: Database error for ID {book_id}')
+        return {'success': False, 'message': 'Güncelleme başarısız'}
+
+    @staticmethod
+    def delete_book(book_id):
+        """Kitap sil"""
+        logger.info(f'Book deletion attempt for ID: {book_id}')
+        book = BookRepository.find_by_id(book_id)
+        if not book:
+            logger.warning(f'Book deletion failed: Book not found - ID {book_id}')
+            return {'success': False, 'message': 'Kitap bulunamadı'}
+
+        book_title = book.title
+        if BookRepository.delete(book):
+            logger.info(f'Book deleted successfully: {book_title} (ID: {book_id})')
+            return {'success': True, 'message': 'Kitap silindi'}
+
+        logger.error(f'Book deletion failed: Database error for ID {book_id}')
+        return {'success': False, 'message': 'Silme başarısız'}
