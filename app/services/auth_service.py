@@ -33,3 +33,38 @@ class AuthService:
             return {'success': False, 'message': 'Geçersiz email formatı'}
 
         # Şifre kontrolü (güçlendirilmiş)
+        is_valid, error_message = PasswordValidator.validate_password(password)
+        if not is_valid:
+            logger.warning(f'Registration failed: {error_message} for {username}')
+            return {'success': False, 'message': error_message}
+
+        # Rol kontrolü
+        if role not in ['admin', 'member']:
+            logger.warning(f'Registration failed: Invalid role {role} for {username}')
+            return {'success': False, 'message': 'Geçersiz rol'}
+
+        # Girdi temizleme
+        username = InputValidator.sanitize_text(username, max_length=80)
+        email = InputValidator.sanitize_text(email, max_length=120)
+
+        # Kullanıcı adı ve email kontrolü
+        if UserRepository.find_by_username(username):
+            logger.warning(f'Registration failed: Username {username} already exists')
+            return {'success': False, 'message': 'Kullanıcı adı zaten kullanımda'}
+
+        if UserRepository.find_by_email(email):
+            logger.warning(f'Registration failed: Email {email} already registered')
+            return {'success': False, 'message': 'Email zaten kayıtlı'}
+
+        # Kullanıcı oluştur
+        user = UserRepository.create(username, email, password, role)
+        if user:
+            # Başarılı kayıt
+            security_logger.log_registration(username, email, role, True)
+            logger.info(f'User registered successfully: {username} (ID: {user.id})')
+            return {'success': True, 'message': 'Kayıt başarılı', 'user': user.to_dict()}
+
+        # Kayıt başarısız
+        security_logger.log_registration(username, email, role, False)
+        logger.error(f'Registration failed: Database error for {username}')
+        return {'success': False, 'message': 'Kayıt başarısız'}
