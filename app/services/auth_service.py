@@ -68,3 +68,38 @@ class AuthService:
         security_logger.log_registration(username, email, role, False)
         logger.error(f'Registration failed: Database error for {username}')
         return {'success': False, 'message': 'Kayıt başarısız'}
+
+    @staticmethod
+    def login(username: str, password: str) -> dict:
+        """Kullanıcı girişi"""
+        logger.info(f'Login attempt for username: {username}')
+
+        user = UserRepository.find_by_username(username)
+
+        if not user or not user.check_password(password):
+            # Başarısız login
+            reason = 'User not found' if not user else 'Invalid password'
+            security_logger.log_login_attempt(username, False, reason=reason)
+            logger.warning(f'Failed login attempt for {username}: {reason}')
+            return {'success': False, 'message': 'Kullanıcı adı veya şifre hatalı'}
+
+        # JWT token oluştur
+        token = AuthService.generate_token(user)
+
+        # Başarılı login
+        security_logger.log_login_attempt(username, True, user_id=user.id)
+        logger.info(f'Successful login: {username} (ID: {user.id}, Role: {user.role})')
+
+        return {
+            'success': True,
+            'message': 'Giriş başarılı',
+            'token': token,
+            'user': user.to_dict()
+        }
+
+    @staticmethod
+    def generate_token(user):
+        """JWT token oluştur"""
+        payload = {
+            'user_id': user.id,
+            'username': user.username,
