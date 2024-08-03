@@ -103,3 +103,38 @@ class AuthService:
         payload = {
             'user_id': user.id,
             'username': user.username,
+            'role': user.role,
+            'exp': datetime.utcnow() + timedelta(hours=Config.JWT_EXPIRATION_HOURS)
+        }
+        token = jwt.encode(payload, Config.SECRET_KEY, algorithm=Config.JWT_ALGORITHM)
+        return token
+
+    @staticmethod
+    def verify_token(token: str) -> dict:
+        """JWT token doğrula"""
+        try:
+            payload = jwt.decode(token, Config.SECRET_KEY, algorithms=[Config.JWT_ALGORITHM])
+            # Başarılı validasyon
+            security_logger.log_token_validation(True, user_id=payload.get('user_id'))
+            return {'success': True, 'payload': payload}
+        except jwt.ExpiredSignatureError:
+            # Token süresi dolmuş
+            security_logger.log_token_validation(False, reason='Token expired')
+            logger.warning('Token validation failed: Expired token')
+            return {'success': False, 'message': 'Token süresi dolmuş'}
+        except jwt.InvalidTokenError as e:
+            # Geçersiz token
+            security_logger.log_token_validation(False, reason='Invalid token')
+            logger.warning(f'Token validation failed: Invalid token - {str(e)}')
+            return {'success': False, 'message': 'Geçersiz token'}
+
+    @staticmethod
+    def get_current_user(token):
+        """Token'dan kullanıcı bilgisi al"""
+        result = AuthService.verify_token(token)
+        if result['success']:
+            user_id = result['payload']['user_id']
+            user = UserRepository.find_by_id(user_id)
+            if user:
+                return {'success': True, 'user': user}
+        return {'success': False, 'message': 'Kullanıcı bulunamadı'}
