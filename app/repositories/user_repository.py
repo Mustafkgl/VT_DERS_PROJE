@@ -13,3 +13,18 @@ class UserRepository:
             db.session.add(user)
             db.session.commit()
             return user
+        except IntegrityError:
+            db.session.rollback()
+            return None
+
+    @staticmethod
+    def find_by_id(user_id):
+        """ID ile kullanıcı bul"""
+        return User.query.get(user_id)
+
+    @staticmethod
+    def find_by_username(username):
+        """Kullanıcı adı ile kullanıcı bul"""
+        return User.query.filter_by(username=username).first()
+
+    @staticmethod
