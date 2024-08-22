@@ -28,3 +28,18 @@ class UserRepository:
         return User.query.filter_by(username=username).first()
 
     @staticmethod
+    def find_by_email(email):
+        """Email ile kullanıcı bul"""
+        return User.query.filter_by(email=email).first()
+
+    @staticmethod
+    def get_all():
+        """Tüm kullanıcıları getir"""
+        return User.query.all()
+
+    @staticmethod
+    def update(user):
+        """Kullanıcı güncelle"""
+        try:
+            db.session.commit()
+            return user
