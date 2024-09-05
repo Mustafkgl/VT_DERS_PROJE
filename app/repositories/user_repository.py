@@ -43,3 +43,17 @@ class UserRepository:
         try:
             db.session.commit()
             return user
+        except IntegrityError:
+            db.session.rollback()
+            return None
+
+    @staticmethod
+    def delete(user):
+        """Kullanıcı sil"""
+        try:
+            db.session.delete(user)
+            db.session.commit()
+            return True
+        except Exception:
+            db.session.rollback()
+            return False
