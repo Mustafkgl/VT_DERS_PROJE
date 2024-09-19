@@ -25,3 +25,17 @@ class FineRepository:
 
     @staticmethod
     def get_all():
+        """Tüm cezaları getir"""
+        return Fine.query.all()
+
+    @staticmethod
+    def get_unpaid():
+        """Tüm ödenmemiş cezaları getir"""
+        return Fine.query.filter_by(paid=False).all()
+
+    @staticmethod
+    def mark_as_paid(fine_id):
+        """Cezayı ödenmiş olarak işaretle"""
+        fine = Fine.query.get(fine_id)
+        if fine:
+            fine.paid = True
