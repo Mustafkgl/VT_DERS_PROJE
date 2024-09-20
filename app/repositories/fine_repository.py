@@ -39,3 +39,16 @@ class FineRepository:
         fine = Fine.query.get(fine_id)
         if fine:
             fine.paid = True
+            db.session.commit()
+            return fine
+        return None
+
+    @staticmethod
+    def update(fine):
+        """Ceza güncelle"""
+        try:
+            db.session.commit()
+            return fine
+        except Exception:
+            db.session.rollback()
+            return None
