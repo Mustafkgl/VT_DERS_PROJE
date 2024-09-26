@@ -21,3 +21,26 @@ class BorrowingRepository:
             else:
                 db.session.flush()  # Get ID without committing
             return borrowing
+        except Exception:
+            db.session.rollback()
+            return None
+
+    @staticmethod
+    def find_by_id(borrowing_id):
+        """ID ile ödünç alma kaydı bul"""
+        return Borrowing.query.get(borrowing_id)
+
+    @staticmethod
+    def find_by_user(user_id):
+        """Kullanıcının tüm ödünç alma kayıtlarını getir"""
+        return Borrowing.query.filter_by(user_id=user_id).all()
+
+    @staticmethod
+    def find_active_by_user(user_id):
+        """Kullanıcının aktif ödünç alma kayıtlarını getir"""
+        return Borrowing.query.filter_by(
+            user_id=user_id,
+            status='borrowed'
+        ).all()
+
+    @staticmethod
