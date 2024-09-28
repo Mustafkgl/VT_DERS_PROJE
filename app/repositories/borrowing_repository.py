@@ -44,3 +44,26 @@ class BorrowingRepository:
         ).all()
 
     @staticmethod
+    def find_by_book(book_id):
+        """Kitabın tüm ödünç alma kayıtlarını getir"""
+        return Borrowing.query.filter_by(book_id=book_id).all()
+
+    @staticmethod
+    def get_all():
+        """Tüm ödünç alma kayıtlarını getir"""
+        return Borrowing.query.all()
+
+    @staticmethod
+    def get_active():
+        """Aktif ödünç alma kayıtlarını getir"""
+        return Borrowing.query.filter_by(status='borrowed').all()
+
+    @staticmethod
+    def return_book(borrowing_id, return_date=None):
+        """Kitap iadesi yap - Trigger otomatik ceza hesaplayacak"""
+        borrowing = Borrowing.query.get(borrowing_id)
+        if borrowing and borrowing.status == 'borrowed':
+            borrowing.return_date = return_date or datetime.utcnow()
+            # Trigger burada devreye girecek ve ceza hesaplayacak
+            db.session.commit()
+            return borrowing
