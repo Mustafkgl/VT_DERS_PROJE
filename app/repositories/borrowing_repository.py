@@ -67,3 +67,26 @@ class BorrowingRepository:
             # Trigger burada devreye girecek ve ceza hesaplayacak
             db.session.commit()
             return borrowing
+        return None
+
+    @staticmethod
+    def update(borrowing):
+        """Ödünç alma kaydı güncelle"""
+        try:
+            db.session.commit()
+            return borrowing
+        except Exception:
+            db.session.rollback()
+            return None
+
+    @staticmethod
+    def get_report(start_date, end_date):
+        """Stored Procedure ile rapor al"""
+        sql = text("""
+            SELECT * FROM get_borrowings_report(:start_date, :end_date)
+        """)
+        result = db.session.execute(
+            sql,
+            {'start_date': start_date, 'end_date': end_date}
+        )
+        return result.fetchall()
