@@ -23,3 +23,28 @@ class BookRepository:
             return book
         except IntegrityError:
             db.session.rollback()
+            return None
+
+    @staticmethod
+    def find_by_id(book_id):
+        """ID ile kitap bul"""
+        return Book.query.get(book_id)
+
+    @staticmethod
+    def find_by_isbn(isbn):
+        """ISBN ile kitap bul"""
+        return Book.query.filter_by(isbn=isbn).first()
+
+    @staticmethod
+    def search(query):
+        """Kitap ara (başlık veya yazar)"""
+        search_pattern = f'%{query}%'
+        return Book.query.filter(
+            db.or_(
+                Book.title.ilike(search_pattern),
+                Book.author.ilike(search_pattern)
+            )
+        ).all()
+
+    @staticmethod
+    def get_all():
