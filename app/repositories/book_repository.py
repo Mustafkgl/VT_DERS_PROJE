@@ -48,3 +48,28 @@ class BookRepository:
 
     @staticmethod
     def get_all():
+        """Tüm kitapları getir"""
+        return Book.query.all()
+
+    @staticmethod
+    def get_available():
+        """Mevcut kitapları getir"""
+        return Book.query.filter(Book.available_copies > 0).all()
+
+    @staticmethod
+    def update(book):
+        """Kitap güncelle"""
+        try:
+            db.session.commit()
+            return book
+        except IntegrityError:
+            db.session.rollback()
+            return None
+
+    @staticmethod
+    def delete(book):
+        """Kitap sil"""
+        try:
+            db.session.delete(book)
+            db.session.commit()
+            return True
