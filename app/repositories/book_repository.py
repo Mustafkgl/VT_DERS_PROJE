@@ -73,3 +73,28 @@ class BookRepository:
             db.session.delete(book)
             db.session.commit()
             return True
+        except Exception:
+            db.session.rollback()
+            return False
+
+    @staticmethod
+    def decrease_available_copies(book_id, auto_commit=True):
+        """Mevcut kopya sayısını azalt"""
+        book = Book.query.get(book_id)
+        if book and book.available_copies > 0:
+            book.available_copies -= 1
+            if auto_commit:
+                db.session.commit()
+            return True
+        return False
+
+    @staticmethod
+    def increase_available_copies(book_id, auto_commit=True):
+        """Mevcut kopya sayısını artır"""
+        book = Book.query.get(book_id)
+        if book and book.available_copies < book.total_copies:
+            book.available_copies += 1
+            if auto_commit:
+                db.session.commit()
+            return True
+        return False
