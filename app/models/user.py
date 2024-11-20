@@ -18,3 +18,14 @@ class User(db.Model):
     # İlişkiler
     borrowings = db.relationship('Borrowing', back_populates='user', lazy='dynamic')
     fines = db.relationship('Fine', back_populates='user', lazy='dynamic')
+
+    def set_password(self, password):
+        """Şifreyi hash'le ve kaydet"""
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Şifreyi kontrol et"""
+        return check_password_hash(self.password, password)
+
+    def to_dict(self):
+        """Modeli dictionary'ye çevir"""
