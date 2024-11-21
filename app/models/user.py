@@ -29,3 +29,13 @@ class User(db.Model):
 
     def to_dict(self):
         """Modeli dictionary'ye çevir"""
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'role': self.role,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+    def __repr__(self):
+        return f'<User {self.username}>'
