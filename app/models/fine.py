@@ -14,3 +14,11 @@ class Fine(db.Model):
 
     # İlişkiler
     borrowing = db.relationship('Borrowing', back_populates='fine')
+    user = db.relationship('User', back_populates='fines')
+
+    def to_dict(self):
+        """Modeli dictionary'ye çevir"""
+        return {
+            'id': self.id,
+            'borrowing_id': self.borrowing_id,
+            'user_id': self.user_id,
