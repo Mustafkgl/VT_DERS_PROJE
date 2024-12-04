@@ -22,3 +22,10 @@ class Fine(db.Model):
             'id': self.id,
             'borrowing_id': self.borrowing_id,
             'user_id': self.user_id,
+            'amount': float(self.amount),
+            'paid': self.paid,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+    def __repr__(self):
+        return f'<Fine {self.id}>'
