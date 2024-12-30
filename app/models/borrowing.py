@@ -16,3 +16,12 @@ class Borrowing(db.Model):
 
     # İlişkiler
     user = db.relationship('User', back_populates='borrowings')
+    book = db.relationship('Book', back_populates='borrowings')
+    fine = db.relationship('Fine', back_populates='borrowing', uselist=False)
+
+    def to_dict(self):
+        """Modeli dictionary'ye çevir"""
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'book_id': self.book_id,
