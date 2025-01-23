@@ -16,3 +16,12 @@ class Book(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # İlişkiler
+    borrowings = db.relationship('Borrowing', back_populates='book', lazy='dynamic')
+
+    def to_dict(self):
+        """Modeli dictionary'ye çevir"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'author': self.author,
+            'isbn': self.isbn,
