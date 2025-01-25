@@ -25,3 +25,12 @@ class Book(db.Model):
             'title': self.title,
             'author': self.author,
             'isbn': self.isbn,
+            'publisher': self.publisher,
+            'publication_year': self.publication_year,
+            'total_copies': self.total_copies,
+            'available_copies': self.available_copies,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
+    def __repr__(self):
+        return f'<Book {self.title}>'
