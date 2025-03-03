@@ -39,3 +39,24 @@ def admin_required(f):
         token = None
 
         # Header'dan token al
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            try:
+                token = auth_header.split(' ')[1]
+            except IndexError:
+                logger.warning('Invalid token format in Authorization header')
+                return jsonify({'success': False, 'message': 'Geçersiz token formatı'}), 401
+
+        if not token:
+            logger.warning(f'Missing token for admin endpoint: {request.path}')
+            return jsonify({'success': False, 'message': 'Token gerekli'}), 401
+
+        # Token doğrula
+        result = AuthService.verify_token(token)
+        if not result['success']:
+            logger.warning(f'Invalid token for admin endpoint: {request.path}')
+            return jsonify(result), 401
+
+        # Admin kontrolü
+        if result['payload']['role'] != 'admin':
+            # Yetkisiz erişim denemesi
