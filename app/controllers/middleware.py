@@ -60,3 +60,23 @@ def admin_required(f):
         # Admin kontrolü
         if result['payload']['role'] != 'admin':
             # Yetkisiz erişim denemesi
+            security_logger.log_unauthorized_access(
+                endpoint=request.path,
+                user_id=result['payload'].get('user_id'),
+                required_role='admin'
+            )
+            logger.warning(
+                f'Unauthorized admin access attempt by user {result["payload"].get("user_id")} '
+                f'to {request.path}'
+            )
+            return jsonify({'success': False, 'message': 'Admin yetkisi gerekli'}), 403
+
+        # Başarılı admin erişimi
+        logger.info(
+            f'Admin access: {request.method} {request.path} '
+            f'by user {result["payload"].get("user_id")}'
+        )
+
+        return f(result['payload'], *args, **kwargs)
+
+    return decorated
