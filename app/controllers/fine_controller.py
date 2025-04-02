@@ -20,3 +20,16 @@ def get_my_unpaid_fines(current_user):
     """Ödenmemiş cezalarımı getir"""
     result = FineService.get_unpaid_fines(current_user['user_id'])
     return jsonify(result), 200
+
+@fine_bp.route('/<int:fine_id>/pay', methods=['POST'])
+@token_required
+def pay_fine(current_user, fine_id):
+    """Ceza öde"""
+    result = FineService.pay_fine(fine_id)
+
+    if result['success']:
+        return jsonify(result), 200
+    return jsonify(result), 400
+
+@fine_bp.route('', methods=['GET'])
+@admin_required
