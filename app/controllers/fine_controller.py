@@ -33,3 +33,14 @@ def pay_fine(current_user, fine_id):
 
 @fine_bp.route('', methods=['GET'])
 @admin_required
+def get_all_fines(current_user):
+    """Tüm cezaları getir (Admin)"""
+    result = FineService.get_all_fines()
+    return jsonify(result), 200
+
+@fine_bp.route('/unpaid', methods=['GET'])
+@admin_required
+def get_all_unpaid_fines(current_user):
+    """Tüm ödenmemiş cezaları getir (Admin)"""
+    result = FineService.get_all_unpaid_fines()
+    return jsonify(result), 200
