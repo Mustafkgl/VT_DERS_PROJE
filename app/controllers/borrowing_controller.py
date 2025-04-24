@@ -19,3 +19,26 @@ def borrow_book(current_user):
 
     if not book_id:
         return jsonify({'success': False, 'message': 'Kitap ID gerekli'}), 400
+
+    result = BorrowingService.borrow_book(current_user['user_id'], book_id, days)
+
+    if result['success']:
+        return jsonify(result), 201
+    return jsonify(result), 400
+
+@borrowing_bp.route('/<int:borrowing_id>/return', methods=['POST'])
+@token_required
+def return_book(current_user, borrowing_id):
+    """Kitap iade et"""
+    result = BorrowingService.return_book(borrowing_id)
+
+    if result['success']:
+        return jsonify(result), 200
+    return jsonify(result), 400
+
+@borrowing_bp.route('/my', methods=['GET'])
+@token_required
+def get_my_borrowings(current_user):
+    """Kendi ödünç kayıtlarımı getir"""
+    result = BorrowingService.get_user_borrowings(current_user['user_id'])
+    return jsonify(result), 200
