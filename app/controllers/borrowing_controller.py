@@ -42,3 +42,24 @@ def get_my_borrowings(current_user):
     """Kendi ödünç kayıtlarımı getir"""
     result = BorrowingService.get_user_borrowings(current_user['user_id'])
     return jsonify(result), 200
+
+@borrowing_bp.route('', methods=['GET'])
+@admin_required
+def get_all_borrowings(current_user):
+    """Tüm ödünç kayıtlarını getir (Admin)"""
+    result = BorrowingService.get_all_borrowings()
+    return jsonify(result), 200
+
+@borrowing_bp.route('/active', methods=['GET'])
+@admin_required
+def get_active_borrowings(current_user):
+    """Aktif ödünç kayıtlarını getir (Admin)"""
+    result = BorrowingService.get_active_borrowings()
+    return jsonify(result), 200
+
+@borrowing_bp.route('/report', methods=['GET'])
+@admin_required
+def get_borrowings_report(current_user):
+    """Tarih aralığına göre rapor al (Admin) - Stored Procedure kullanır"""
+    start_date_str = request.args.get('start_date')
+    end_date_str = request.args.get('end_date')
