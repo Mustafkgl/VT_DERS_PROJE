@@ -63,3 +63,26 @@ def get_borrowings_report(current_user):
     """Tarih aralığına göre rapor al (Admin) - Stored Procedure kullanır"""
     start_date_str = request.args.get('start_date')
     end_date_str = request.args.get('end_date')
+
+    if not all([start_date_str, end_date_str]):
+        return jsonify({'success': False, 'message': 'Başlangıç ve bitiş tarihi gerekli'}), 400
+
+    try:
+        start_date = datetime.fromisoformat(start_date_str)
+        end_date = datetime.fromisoformat(end_date_str)
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Geçersiz tarih formatı (YYYY-MM-DD)'}), 400
+
+    result = BorrowingService.get_borrowings_report(start_date, end_date)
+
+    if result['success']:
+        # Admin action logging for report generation
+        security_logger.log_admin_action(
+            admin_id=current_user['user_id'],
+            action='generate_borrowings_report',
+            target_type='borrowing',
+            target_id=0,  # No specific borrowing
+            details={'start_date': start_date_str, 'end_date': end_date_str, 'record_count': len(result.get('report', []))}
+        )
+        return jsonify(result), 200
+    return jsonify(result), 400
