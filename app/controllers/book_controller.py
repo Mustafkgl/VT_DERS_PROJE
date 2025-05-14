@@ -28,3 +28,35 @@ def get_available_books(current_user):
     """Mevcut kitapları getir"""
     result = BookService.get_available_books()
     return jsonify(result), 200
+
+@book_bp.route('/<int:book_id>', methods=['GET'])
+@token_required
+def get_book(current_user, book_id):
+    """Kitap detayı"""
+    result = BookService.get_book(book_id)
+    if result['success']:
+        return jsonify(result), 200
+    return jsonify(result), 404
+
+@book_bp.route('/search', methods=['GET'])
+@token_required
+def search_books(current_user):
+    """Kitap ara"""
+    query = request.args.get('q', '')
+    if not query:
+        return jsonify({'success': False, 'message': 'Arama sorgusu gerekli'}), 400
+
+    result = BookService.search_books(query)
+    return jsonify(result), 200
+
+@book_bp.route('', methods=['POST'])
+@admin_required
+def create_book(current_user):
+    """Yeni kitap ekle (Admin)"""
+    data = request.get_json()
+
+    title = data.get('title')
+    author = data.get('author')
+    isbn = data.get('isbn')
+    publisher = data.get('publisher')
+    publication_year = data.get('publication_year')
