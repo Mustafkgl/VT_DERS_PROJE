@@ -60,3 +60,34 @@ def create_book(current_user):
     isbn = data.get('isbn')
     publisher = data.get('publisher')
     publication_year = data.get('publication_year')
+    total_copies = data.get('total_copies', 1)
+
+    if not all([title, author]):
+        return jsonify({'success': False, 'message': 'Başlık ve yazar gerekli'}), 400
+
+    result = BookService.create_book(
+        title=title,
+        author=author,
+        isbn=isbn,
+        publisher=publisher,
+        publication_year=publication_year,
+        total_copies=total_copies
+    )
+
+    if result['success']:
+        # Admin action logging
+        book_id = result['book']['id']
+        security_logger.log_admin_action(
+            admin_id=current_user['user_id'],
+            action='create_book',
+            target_type='book',
+            target_id=book_id,
+            details={'title': title, 'author': author, 'isbn': isbn}
+        )
+        return jsonify(result), 201
+    return jsonify(result), 400
+
+@book_bp.route('/<int:book_id>', methods=['PUT'])
+@admin_required
+def update_book(current_user, book_id):
+    """Kitap güncelle (Admin)"""
