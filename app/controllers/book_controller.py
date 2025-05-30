@@ -91,3 +91,34 @@ def create_book(current_user):
 @admin_required
 def update_book(current_user, book_id):
     """Kitap güncelle (Admin)"""
+    data = request.get_json()
+    result = BookService.update_book(book_id, **data)
+
+    if result['success']:
+        # Admin action logging
+        security_logger.log_admin_action(
+            admin_id=current_user['user_id'],
+            action='update_book',
+            target_type='book',
+            target_id=book_id,
+            details={'updated_fields': list(data.keys())}
+        )
+        return jsonify(result), 200
+    return jsonify(result), 400
+
+@book_bp.route('/<int:book_id>', methods=['DELETE'])
+@admin_required
+def delete_book(current_user, book_id):
+    """Kitap sil (Admin)"""
+    result = BookService.delete_book(book_id)
+
+    if result['success']:
+        # Admin action logging
+        security_logger.log_admin_action(
+            admin_id=current_user['user_id'],
+            action='delete_book',
+            target_type='book',
+            target_id=book_id
+        )
+        return jsonify(result), 200
+    return jsonify(result), 400
