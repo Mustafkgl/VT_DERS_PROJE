@@ -12,3 +12,18 @@ def register():
 
     username = data.get('username')
     email = data.get('email')
+    password = data.get('password')
+    role = data.get('role', 'member')
+
+    if not all([username, email, password]):
+        return jsonify({'success': False, 'message': 'Eksik bilgi'}), 400
+
+    result = AuthService.register(username, email, password, role)
+
+    if result['success']:
+        return jsonify(result), 201
+    return jsonify(result), 400
+
+@auth_bp.route('/login', methods=['POST'])
+@limiter.limit("5 per minute")  # Rate limiting: 5 deneme/dakika
+def login():
