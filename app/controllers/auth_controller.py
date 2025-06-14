@@ -27,3 +27,17 @@ def register():
 @auth_bp.route('/login', methods=['POST'])
 @limiter.limit("5 per minute")  # Rate limiting: 5 deneme/dakika
 def login():
+    """Kullanıcı girişi"""
+    data = request.get_json()
+
+    username = data.get('username')
+    password = data.get('password')
+
+    if not all([username, password]):
+        return jsonify({'success': False, 'message': 'Eksik bilgi'}), 400
+
+    result = AuthService.login(username, password)
+
+    if result['success']:
+        return jsonify(result), 200
+    return jsonify(result), 401
