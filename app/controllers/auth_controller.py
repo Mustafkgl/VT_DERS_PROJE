@@ -41,3 +41,17 @@ def login():
     if result['success']:
         return jsonify(result), 200
     return jsonify(result), 401
+
+@auth_bp.route('/verify', methods=['POST'])
+def verify():
+    """Token doğrula"""
+    data = request.get_json()
+    token = data.get('token')
+
+    if not token:
+        return jsonify({'success': False, 'message': 'Token gerekli'}), 400
+
+    result = AuthService.verify_token(token)
+    if result['success']:
+        return jsonify(result), 200
+    return jsonify(result), 401
