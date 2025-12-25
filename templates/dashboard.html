@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kütüphane Yönetim - Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h2>Kütüphane Yönetim Sistemi</h2>
+        <div>
+            <span id="userInfo"></span>
+            <button onclick="logout()" class="btn btn-small">Çıkış</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('books')">Kitaplar</button>
+            <button class="tab-btn" onclick="showTab('borrowings')">Ödünç Kitaplarım</button>
+            <button class="tab-btn" onclick="showTab('fines')">Cezalar</button>
+            <button class="tab-btn admin-only" onclick="showTab('admin')" style="display:none;">Admin Panel</button>
+        </div>
+
+        <!-- Kitaplar Sekmesi -->
+        <div id="books" class="tab-content active">
+            <h3>Kitaplar</h3>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Kitap ara...">
+                <button onclick="searchBooks()" class="btn">Ara</button>
+            </div>
+            <div id="booksList" class="items-list"></div>
+        </div>
+
+        <!-- Ödünç Kitaplarım Sekmesi -->
+        <div id="borrowings" class="tab-content">
+            <h3>Ödünç Aldığım Kitaplar</h3>
+            <div id="borrowingsList" class="items-list"></div>
+        </div>
+
+        <!-- Cezalar Sekmesi -->
+        <div id="fines" class="tab-content">
+            <h3>Cezalarım</h3>
+            <div id="finesList" class="items-list"></div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="admin" class="tab-content admin-only" style="display:none;">
+            <h3>Admin Panel</h3>
+            <div class="admin-section">
+                <h4>Yeni Kitap Ekle</h4>
+                <form id="addBookForm">
+                    <input type="text" id="bookTitle" placeholder="Başlık" required>
+                    <input type="text" id="bookAuthor" placeholder="Yazar" required>
+                    <input type="text" id="bookISBN" placeholder="ISBN">
+                    <input type="number" id="bookCopies" placeholder="Kopya Sayısı" value="1" min="1">
+                    <button type="submit" class="btn">Kitap Ekle</button>
+                </form>
+            </div>
+            <div class="admin-section">
+                <h4>Rapor Al</h4>
+                <input type="date" id="reportStartDate">
+                <input type="date" id="reportEndDate">
+                <button onclick="getReport()" class="btn">Rapor Getir</button>
+                <div id="reportResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
