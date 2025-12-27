@@ -64,6 +64,10 @@ def create_app():
     def index():
         return render_template('index.html')
 
+    @app.route('/register')
+    def register_page():
+        return render_template('register.html')
+
     @app.route('/dashboard')
     def dashboard():
         return render_template('dashboard.html')
