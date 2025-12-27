@@ -5,7 +5,7 @@
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-3.0.0-green.svg)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12+-blue.svg)
-![Security](https://img.shields.io/badge/Security%20Score-84.75%2F100-green.svg)
+![Security](https://img.shields.io/badge/Security%20Score-92.50%2F100-brightgreen.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success.svg)
 
@@ -80,9 +80,10 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 - ✅ **Custom Error Handling** - Anlamlı hata mesajları, structured exception handling
 - ✅ **Comprehensive Logging** - Structured JSON logging ile audit trail
 - ✅ **Security Event Logging** - Ayrı güvenlik olayları log dosyası
-- ✅ **CORS Configuration** - Cross-origin resource sharing desteği
+- ✅ **CORS Configuration** - Güvenli origin kontrolü (.env yapılandırmalı)
+- ✅ **Rate Limiting** - Brute force koruması (Flask-Limiter)
+- ✅ **Security Headers** - XSS, clickjacking, MIME sniffing koruması
 - ⚠️ **CSRF Protection** - Önerilen (eklenebilir)
-- ⚠️ **Rate Limiting** - Önerilen (eklenebilir)
 
 ### 📖 Kütüphane Özellikleri
 
@@ -94,10 +95,11 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 - Yayın yılı kontrolü
 
 #### Kullanıcı Yönetimi
-- Kullanıcı kaydı (üye/admin)
+- **Kullanıcı kayıt sayfası** - Yeni üyeler kendilerini kaydedebilir
+- **Güçlü şifre politikası** - 8+ karakter, karmaşıklık gereksinimleri
 - Güvenli giriş/çıkış
 - JWT token bazlı oturum
-- Rol bazlı yetkilendirme
+- Rol bazlı yetkilendirme (Admin/Member)
 
 #### Ödünç Alma Sistemi
 - Kitap ödünç alma (14 gün)
@@ -370,6 +372,7 @@ kutuphane_projesi/
 │
 ├── templates/                   # HTML şablonları
 │   ├── index.html              # Login sayfası
+│   ├── register.html           # Kullanıcı kayıt sayfası
 │   └── dashboard.html          # Ana dashboard
 │
 ├── static/                      # Statik dosyalar
@@ -1128,7 +1131,30 @@ docker-compose down
 
 ### Temel Kullanım Akışı
 
-#### 1. Giriş Yapma
+#### 1. Yeni Üye Kaydı
+
+```
+1. http://localhost:5000 adresine gidin
+2. "Hesabınız yok mu? Kayıt Ol" linkine tıklayın
+3. Kayıt formunu doldurun:
+   - Kullanıcı Adı (3-50 karakter, sadece harf, rakam, _, -)
+   - E-posta
+   - Şifre (en az 8 karakter, büyük/küçük harf, rakam, özel karakter)
+   - Şifre Tekrar
+4. "Kayıt Ol" butonuna tıklayın
+5. Başarılı kayıt sonrası login sayfasına yönlendirilirsiniz
+```
+
+**Şifre Gereksinimleri:**
+- ✅ En az 8 karakter
+- ✅ En az 1 büyük harf (A-Z)
+- ✅ En az 1 küçük harf (a-z)
+- ✅ En az 1 rakam (0-9)
+- ✅ En az 1 özel karakter (!@#$%^&*...)
+
+**Güvenlik:** Rate limiting aktif - 3 kayıt/saat
+
+#### 2. Giriş Yapma
 
 ```
 1. http://localhost:5000 adresine gidin
@@ -1142,7 +1168,9 @@ docker-compose down
 - **Üye:** `ahmet_yilmaz` / `123456`
 - **Üye:** `ayse_demir` / `123456`
 
-#### 2. Kitap Arama
+**Güvenlik:** Rate limiting aktif - 5 deneme/dakika
+
+#### 3. Kitap Arama
 
 ```
 1. "Kitaplar" sekmesine gidin
@@ -1151,7 +1179,7 @@ docker-compose down
 4. Sonuçlar dinamik olarak gösterilir
 ```
 
-#### 3. Kitap Ödünç Alma
+#### 4. Kitap Ödünç Alma
 
 ```
 1. Mevcut bir kitabın "Ödünç Al" butonuna tıklayın
@@ -1160,7 +1188,7 @@ docker-compose down
 4. İade tarihi: Ödünç alma tarihinden 14 gün sonra
 ```
 
-#### 4. Kitap İade Etme
+#### 5. Kitap İade Etme
 
 ```
 1. "Ödünç Kitaplarım" sekmesine gidin
@@ -1169,7 +1197,7 @@ docker-compose down
 4. Eğer gecikme varsa, otomatik ceza oluşturulur
 ```
 
-#### 5. Ceza Ödeme
+#### 6. Ceza Ödeme
 
 ```
 1. "Cezalar" sekmesine gidin
@@ -1178,7 +1206,7 @@ docker-compose down
 4. Her cezanın "Öde" butonuna tıklayarak ödeme yapabilirsiniz
 ```
 
-#### 6. Kitap Ekleme (Admin)
+#### 7. Kitap Ekleme (Admin)
 
 ```
 1. "Admin Panel" sekmesine gidin (sadece admin görebilir)
