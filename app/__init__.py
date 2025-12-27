@@ -5,6 +5,7 @@ from config import Config
 from app.models import db
 
 migrate = Migrate()
+limiter = None  # Global limiter instance
 
 def create_app():
     """Flask uygulaması oluştur"""
@@ -14,7 +15,7 @@ def create_app():
     # CORS Configuration
     CORS(app, resources={
         r"/api/*": {
-            "origins": app.config.get('CORS_ORIGINS', "*"),
+            "origins": app.config.get('CORS_ORIGINS', ["http://localhost:5000"]),
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "expose_headers": ["Content-Type", "Authorization"],
@@ -28,6 +29,16 @@ def create_app():
 
     # Migration başlat
     migrate.init_app(app, db)
+
+    # Rate Limiting başlat
+    global limiter
+    from app.utils.rate_limiter import get_limiter
+    limiter = get_limiter()
+    limiter.init_app(app)
+
+    # Security Headers ekle
+    from app.utils.security_headers import add_security_headers
+    add_security_headers(app)
 
     # Logging sistemini başlat
     from app.utils.logger import setup_logging
