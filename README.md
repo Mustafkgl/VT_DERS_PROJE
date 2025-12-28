@@ -1,6 +1,5 @@
-# 📚 Akıllı Kütüphane Yönetim Sistemi
+# Akıllı Kütüphane Yönetim Sistemi
 
-<div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-3.0.0-green.svg)
@@ -17,7 +16,7 @@
 
 ---
 
-## 📋 İçindekiler
+## İçindekiler
 
 - [Proje Hakkında](#-proje-hakkında)
 - [Özellikler](#-özellikler)
@@ -42,11 +41,11 @@
 
 ---
 
-## 🎯 Proje Hakkında
+## Proje Hakkında
 
 Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak geliştirilmiş, **güvenlik odaklı**, **ölçeklenebilir** ve **kullanıcı dostu** bir full-stack web uygulamasıdır.
 
-### 🎓 Proje Amacı
+### Proje Amacı
 
 - Kütüphanelerin kitap envanteri, üye yönetimi ve ödünç işlemlerini dijitalleştirmek
 - Modern güvenlik best practice'lerini uygulamak
@@ -54,7 +53,7 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 - PostgreSQL trigger ve stored procedure kullanımını öğretmek
 - RESTful API tasarımını göstermek
 
-### 👥 Hedef Kitle
+### Hedef Kitle
 
 - Küçük ve orta ölçekli kütüphaneler
 - Eğitim kurumları (okul, üniversite kütüphaneleri)
@@ -63,9 +62,9 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 
 ---
 
-## ✨ Özellikler
+## Özellikler
 
-### 🔐 Güvenlik Özellikleri
+### Güvenlik Özellikleri
 
 - ✅ **SQL Injection Koruması** - SQLAlchemy ORM ile %100 korumalı
 - ✅ **XSS Koruması** - Backend ve frontend HTML escaping
@@ -83,7 +82,7 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 - ✅ **Security Headers** - XSS, clickjacking, MIME sniffing koruması
 - ⚠️ **CSRF Protection** - Önerilen (eklenebilir)
 
-### 📖 Kütüphane Özellikleri
+### Kütüphane Özellikleri
 
 #### Kitap Yönetimi
 - Kitap ekleme, düzenleme, silme (Admin)
@@ -119,7 +118,7 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 - Kullanıcı, kitap ve ceza bilgileri
 - Detaylı istatistikler
 
-### 🎨 Kullanıcı Arayüzü
+### Kullanıcı Arayüzü
 
 - Responsive tasarım (mobil uyumlu)
 - Tab-based interface (Kitaplar, Ödünç, Cezalar, Admin)
@@ -127,7 +126,7 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 - Dinamik içerik yükleme
 - Kullanıcı dostu hata mesajları
 
-### 🧪 Kalite ve Test
+### Kalite ve Test
 
 - ✅ **Unit Tests** - pytest ile 17+ test case
 - ✅ **Test Coverage** - %60-70 kod kapsama
@@ -135,7 +134,7 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 - ✅ **SQLite Test DB** - In-memory test database
 - ✅ **CI/CD Ready** - pytest-cov ile raporlama
 
-### 🛠️ Geliştirici Özellikleri
+### Geliştirici Özellikleri
 
 - ✅ **Type Hints** - Python type annotations (kritik modüller)
 - ✅ **Database Migrations** - Flask-Migrate/Alembic entegrasyonu
@@ -147,47 +146,47 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 
 ---
 
-## 🖼️ Demo
+## Demo
 
 ### Giriş Sayfası
 
 ```
 ┌─────────────────────────────────────────┐
-│   Kütüphane Yönetim Sistemi            │
+│   Kütüphane Yönetim Sistemi             │
 │                                         │
-│   Kullanıcı Adı: [______________]      │
-│   Şifre:         [______________]      │
+│   Kullanıcı Adı: [______________]       │
+│   Şifre:         [______________]       │
 │                                         │
-│          [ Giriş Yap ]                 │
+│          [ Giriş Yap ]                  │
 │                                         │
-│   Varsayılan Admin: admin / admin123   │
+│   Varsayılan Admin: admin / admin123    │
 └─────────────────────────────────────────┘
 ```
 
 ### Ana Dashboard (Kitaplar Sekmesi)
 
 ```
-┌─────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────┐
 │  Kütüphane Yönetim Sistemi          admin (Yönetici) [Çıkış] │
-├─────────────────────────────────────────────────────────┤
-│ [Kitaplar] [Ödünç Kitaplarım] [Cezalar] [Admin Panel] │
-├─────────────────────────────────────────────────────────┤
-│  Kitap ara: [___________________] [Ara]                │
-│                                                         │
-│  ┌──────────────────────┐  ┌──────────────────────┐   │
-│  │ Clean Code           │  │ Design Patterns      │   │
-│  │ Robert C. Martin     │  │ Gang of Four         │   │
-│  │ ISBN: 978-0132...   │  │ ISBN: 978-0201...   │   │
-│  │ Mevcut: 3 / 5       │  │ Mevcut: 0 / 2       │   │
-│  │ [Ödünç Al]          │  │ Stokta yok          │   │
-│  └──────────────────────┘  └──────────────────────┘   │
-│                                                         │
-│  ┌──────────────────────┐  ┌──────────────────────┐   │
-│  │ Refactoring          │  │ The Pragmatic...     │   │
-│  │ Martin Fowler        │  │ Andrew Hunt          │   │
-│  │ ...                  │  │ ...                  │   │
-│  └──────────────────────┘  └──────────────────────┘   │
-└─────────────────────────────────────────────────────────┘
+├──────────────────────────────────────────────────────────────┤
+│ [Kitaplar] [Ödünç Kitaplarım] [Cezalar] [Admin Panel]        │
+├──────────────────────────────────────────────────────────────┤
+│  Kitap ara: [___________________] [Ara]                      │
+│                                                              │
+│  ┌──────────────────────┐  ┌──────────────────────┐          │
+│  │ Clean Code           │  │ Design Patterns      │          │
+│  │ Robert C. Martin     │  │ Gang of Four         │          │
+│  │ ISBN: 978-0132...    │  │ ISBN: 978-0201...    │          │
+│  │ Mevcut: 3 / 5        │  │ Mevcut: 0 / 2        │          │
+│  │ [Ödünç Al]           │  │ Stokta yok           │          │
+│  └──────────────────────┘  └──────────────────────┘          │
+│                                                              │
+│  ┌──────────────────────┐  ┌──────────────────────┐          │
+│  │ Refactoring          │  │ The Pragmatic...     │          │
+│  │ Martin Fowler        │  │ Andrew Hunt          │          │
+│  │ ...                  │  │ ...                  │          │
+│  └──────────────────────┘  └──────────────────────┘          │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ### Admin Panel
@@ -196,32 +195,32 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 ┌─────────────────────────────────────────────────────────┐
 │  Admin Panel                                            │
 │                                                         │
-│  ┌─ Yeni Kitap Ekle ────────────────────────────────┐  │
-│  │  Başlık:      [_________________________]        │  │
-│  │  Yazar:       [_________________________]        │  │
-│  │  ISBN:        [_________________________]        │  │
-│  │  Kopya Sayısı: [___]                             │  │
-│  │                              [Kitap Ekle]        │  │
-│  └──────────────────────────────────────────────────┘  │
+│  ┌─ Yeni Kitap Ekle ────────────────────────────────┐   │
+│  │  Başlık:      [_________________________]        │   │
+│  │  Yazar:       [_________________________]        │   │
+│  │  ISBN:        [_________________________]        │   │
+│  │  Kopya Sayısı: [___]                             │   │
+│  │                              [Kitap Ekle]        │   │
+│  └──────────────────────────────────────────────────┘   │
 │                                                         │
-│  ┌─ Rapor Al ───────────────────────────────────────┐  │
-│  │  Başlangıç: [2025-01-01] Bitiş: [2025-12-31]    │  │
-│  │                              [Rapor Getir]       │  │
-│  │                                                  │  │
-│  │  Rapor Sonuçları (45 kayıt)                     │  │
-│  │  ┌────────────────────────────────────────────┐ │  │
-│  │  │ Kullanıcı: ahmet_yilmaz                   │ │  │
-│  │  │ Kitap: Clean Code - Robert C. Martin      │ │  │
-│  │  │ Durum: İade Edildi                        │ │  │
-│  │  │ Ceza: 0.00 TL                             │ │  │
-│  │  └────────────────────────────────────────────┘ │  │
-│  └──────────────────────────────────────────────────┘  │
+│  ┌─ Rapor Al ───────────────────────────────────────┐   │
+│  │  Başlangıç: [2025-01-01] Bitiş: [2025-12-31]     │   │
+│  │                              [Rapor Getir]       │   │
+│  │                                                  │   │
+│  │  Rapor Sonuçları (45 kayıt)                      │   │
+│  │  ┌────────────────────────────────────────────┐  │   │
+│  │  │ Kullanıcı: ahmet_yilmaz                    │  │   │
+│  │  │ Kitap: Clean Code - Robert C. Martin       │  │   │
+│  │  │ Durum: İade Edildi                         │  │   │
+│  │  │ Ceza: 0.00 TL                              │  │   │
+│  │  └────────────────────────────────────────────┘  │   │
+│  └──────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🛠️ Teknoloji Stack
+## Teknoloji Stack
 
 ### Backend
 
@@ -273,7 +272,7 @@ Akıllı Kütüphane Yönetim Sistemi, modern web teknolojileri kullanılarak ge
 
 ---
 
-## 🏗️ Mimari
+## Mimari
 
 ### Katmanlı Mimari (Layered Architecture)
 
@@ -435,9 +434,7 @@ kutuphane_projesi/
 
 ---
 
-## 🔐 Güvenlik
-
-### Güvenlik Skoru: **92.50/100** ⭐⭐⭐⭐⭐
+## Güvenlik
 
 ### Uygulanan Güvenlik Önlemleri
 
@@ -681,10 +678,10 @@ def register():
 ```
 
 **Limitler:**
-- 🔐 **Login:** 5 başarısız deneme/dakika (brute force koruması)
-- 📝 **Register:** 3 kayıt/saat (spam koruması)
-- 🌐 **Genel API:** 200 istek/dakika
-- ⚙️ **Admin API:** 50 istek/dakika
+- **Login:** 5 başarısız deneme/dakika (brute force koruması)
+- **Register:** 3 kayıt/saat (spam koruması)
+- **Genel API:** 200 istek/dakika
+- **Admin API:** 50 istek/dakika
 
 **Avantajlar:**
 - ✅ Brute force saldırı koruması
@@ -741,23 +738,6 @@ Hassas bilgiler artık .env.example'da şablon olarak saklanıyor.
 | **Token Revocation** | 🟡 Orta | Logout sonrası token geçerli kalıyor |
 | **2FA/MFA** | 🟢 Düşük | İki faktörlü doğrulama yok (opsiyonel) |
 
-### Güvenlik İyileştirme Önerileri
-
-**Acil (Production için gerekli):**
-1. ✅ ~~Rate limiting ekle (Flask-Limiter)~~ **TAMAMLANDI**
-2. ✅ ~~Security headers (7 adet)~~ **TAMAMLANDI**
-3. ✅ ~~CORS yapılandırması güvenliği~~ **TAMAMLANDI**
-4. 🔄 HTTPS/TLS (Let's Encrypt)
-5. 🔄 Account lockout mekanizması
-
-**Önerilen:**
-6. CSRF token (SPA için opsiyonel)
-7. Token revocation (Redis blacklist)
-8. 2FA/MFA (opsiyonel)
-
-Detaylı güvenlik raporu için: [GUVENLIK_RAPORU_DETAYLI.md](GUVENLIK_RAPORU_DETAYLI.md)
-
----
 
 ## 📋 Gereksinimler
 
@@ -780,7 +760,7 @@ Detaylı güvenlik raporu için: [GUVENLIK_RAPORU_DETAYLI.md](GUVENLIK_RAPORU_DE
 
 ---
 
-## 🚀 Kurulum
+## Kurulum
 
 ### Windows Kurulumu
 
@@ -1267,7 +1247,7 @@ curl -X POST http://localhost:5000/api/borrowings \
 
 ---
 
-## 📄 Sayfa Detayları
+## Sayfa Detayları
 
 ### 1. Login Sayfası (`index.html`)
 
@@ -2258,7 +2238,7 @@ Tüm ödenmemiş cezalar. **(Admin gerekli)**
 
 ---
 
-## 💾 Veritabanı
+## Veritabanı
 
 ### Şema Diyagramı
 
@@ -2456,7 +2436,7 @@ SELECT * FROM get_borrowings_report('2025-01-01', '2025-12-31');
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Manuel Test
 
@@ -2507,40 +2487,6 @@ curl -X POST http://localhost:5000/api/books \
   -d '{"title":"Test","author":"Test"}'
 
 # Beklenen: 403 Forbidden
-```
-
-### Otomatik Test (Öneri)
-
-```python
-# tests/test_auth.py
-import unittest
-from app import create_app
-from app.models import db
-
-class AuthTestCase(unittest.TestCase):
-    def setUp(self):
-        self.app = create_app()
-        self.client = self.app.test_client()
-
-    def test_login_success(self):
-        response = self.client.post('/api/auth/login', json={
-            'username': 'admin',
-            'password': 'admin123'
-        })
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.json['success'])
-        self.assertIn('token', response.json)
-
-    def test_login_fail(self):
-        response = self.client.post('/api/auth/login', json={
-            'username': 'admin',
-            'password': 'wrongpassword'
-        })
-        self.assertEqual(response.status_code, 401)
-        self.assertFalse(response.json['success'])
-
-if __name__ == '__main__':
-    unittest.main()
 ```
 
 **Çalıştırma:**
@@ -2674,7 +2620,7 @@ sudo systemctl enable certbot.timer
 
 ---
 
-## 🔧 Geliştirme
+## Geliştirme
 
 ### Geliştirme Ortamı
 
@@ -2779,37 +2725,6 @@ app.register_blueprint(favorite_bp)
 
 ---
 
-## 🤝 Katkıda Bulunma
-
-### Katkı Süreci
-
-1. **Fork** edin
-2. **Feature branch** oluşturun (`git checkout -b feature/amazing-feature`)
-3. **Commit** edin (`git commit -m 'Add amazing feature'`)
-4. **Push** edin (`git push origin feature/amazing-feature`)
-5. **Pull Request** açın
-
-### Kod Standartları
-
-- **PEP 8** (Python)
-- **ESLint** (JavaScript - opsiyonel)
-- **Docstring** (tüm fonksiyonlarda)
-- **Type hints** (Python 3.8+)
-
-### Commit Mesajları
-
-```
-feat: Add book reservation feature
-fix: Fix SQL injection vulnerability
-docs: Update README installation steps
-style: Format code with black
-refactor: Extract validation logic to utils
-test: Add unit tests for auth service
-chore: Update dependencies
-```
-
----
-
 ## 🙏 Teşekkürler
 
 - [Flask](https://flask.palletsprojects.com/) - Awesome web framework
@@ -2819,14 +2734,6 @@ chore: Update dependencies
 
 ---
 
-## 📚 Ek Kaynaklar
-
-### Dokümantasyon
-
-- **Detaylı Proje Raporu:** [PROJE_RAPORU.md](PROJE_RAPORU.md)
-- **Güvenlik Raporu:** [GUVENLIK_RAPORU_DETAYLI.md](GUVENLIK_RAPORU_DETAYLI.md)
-- **API Referansı:** Bu README'nin [API Dokümantasyonu](#-api-dokümantasyonu) bölümü
-
 ### Faydalı Linkler
 
 - [Flask Mega-Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
@@ -2835,4 +2742,3 @@ chore: Update dependencies
 - [REST API Best Practices](https://restfulapi.net/)
 
 ---
-
